@@ -3,7 +3,7 @@
  *  and returning a build specifications list
  */
 #ifndef __parser_h__
-#def __parser_h__
+#define __parser_h__
  
 // A command to execute
 typedef struct {
