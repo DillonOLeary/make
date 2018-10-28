@@ -26,10 +26,9 @@ typedef struct {
     int len;
 } BuildSpecList;
 
-// FIXME undefine exit behavior. Should just exit.
 /** This will parse the text and create the
  *  spec list, making the syntax is right
- *  returns 0 on success and -1 on failure, or exits.
+ *  returns 0 on success, exits on failure.
  */
 int getBuildSpecList(BuildSpecList* specs, FILE* fp);
 
