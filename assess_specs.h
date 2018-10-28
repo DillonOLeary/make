@@ -15,10 +15,12 @@ typedef struct {
     int len;
 } CommandList;
 
+// FIXME undefined exit behavior?
 /**
  * This function will create a list of command to execute and
  * check the logic of the spec list provided
+ * Returns 0 on success and -1 on failure, or exits
  */
-CommandList * getCommandList(CommandList * cmdList, BuildSpecList * specs);
+int getCommandList(CommandList * cmdList, BuildSpecList * specs);
 
 #endif
