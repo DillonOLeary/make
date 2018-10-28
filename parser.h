@@ -2,6 +2,8 @@
  *  This module is responsible for parsing a makefile
  *  and returning a build specifications list
  */
+#ifndef __parser_h__
+#def __parser_h__
  
 // A command to execute
 typedef struct {
@@ -24,4 +26,10 @@ typedef struct {
     int len;
 } BuildSpecList;
 
-BuildSpecList * getBuildSpecList(FILE* fp);
+/** This will parse the text and create the
+ *  spec list, making the syntax is right
+ *  returns 0 on success and -1 on failure, or exits.
+ */
+int getBuildSpecList(BuildSpecList* specs, FILE* fp);
+
+#endif
