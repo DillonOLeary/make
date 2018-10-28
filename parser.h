@@ -22,7 +22,7 @@ typedef struct {
 
 // A list of build specs
 typedef struct {
-    BuildSpec ** bSList;
+    BuildSpec ** list;
     int len;
 } BuildSpecList;
 
