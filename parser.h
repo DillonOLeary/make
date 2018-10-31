@@ -4,6 +4,7 @@
  */
 #ifndef __parser_h__
 #define __parser_h__
+#include <stdio.h>
  
 // A command to execute
 typedef struct {

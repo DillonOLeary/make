@@ -6,16 +6,18 @@
  */
 #ifndef __hash__map_h__
 #define __hash__map_h__
-const int load_factor = .5;
+#include "parser.h"
+// FIXME use const
+#define LOAD_FACTOR .5
 // each node in the map
-typedef struct {
+typedef struct BuildSpecNode {
     // for tranvesal whether this node is potentially a cycle
     // initialized to 0
     int tempMark;
     // this node is not a cycle, initalized to 0
     int permMark;
     BuildSpec * data;
-    Node ** children;
+    struct BuildSpecNode ** children;
 } BuildSpecNode;
 
 // Directed Acyclic Graph mapped with a
@@ -26,10 +28,14 @@ typedef struct {
     char* root;
 } DAG_map;
 
+void createMap(DAG_map * d_map, int size, BuildSpecList * specs);
+
+void populateMap(DAG_map * map, BuildSpecList* specs);
+
 /**
  * This creates the hash map.
  */
-void initHashMap(DAG_map * map, int size, BuildSpecList specs);
+void initHashMap(DAG_map * map, int size, BuildSpecList * specs);
 
 /**
  * This looks up an item in the map. Returns null if the item 
