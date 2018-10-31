@@ -20,6 +20,7 @@ void printMap(DAG_map * map) {
 }
 
 int main() {
+    printf("GOT TO HERE\n");
     DAG_map * map;
     map = malloc(sizeof(map));
     BuildSpecList specs;
