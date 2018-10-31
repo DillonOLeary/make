@@ -17,7 +17,7 @@ typedef struct BuildSpecNode {
     // this node is not a cycle, initalized to 0
     int permMark;
     BuildSpec * data;
-    struct BuildSpecNode ** children;
+    char ** children;
 } BuildSpecNode;
 
 // Directed Acyclic Graph mapped with a

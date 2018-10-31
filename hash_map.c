@@ -14,7 +14,11 @@ void createMap(DAG_map * d_map, int size, BuildSpecList * specs) {
 
 void populateMap(DAG_map * map, BuildSpecList* specs) {
     for(int i=0; i<specs->len; i++) {
-        map->map[i]->data = specs->list[i];
+        BuildSpecNode * node = malloc(sizeof(BuildSpecNode));
+        node->data = specs->list[i];
+        node->tempMark = node->permMark = 0;
+        node->children = specs->list[i]->deps;
+        map->map[i] = node;
     }
 }
 
