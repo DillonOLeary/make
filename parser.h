@@ -7,9 +7,7 @@
  
 // A command to execute
 typedef struct {
-    char * execName;
     char ** args;
-    int argsLen;
 } Command;
 
 // Info for a build spec
