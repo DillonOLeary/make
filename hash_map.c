@@ -14,7 +14,8 @@ void createMap(DAG_map * d_map, int size, BuildSpecList * specs) {
     d_map->root = specs->list[0]->target;
 }
 
-// FIXME can I use this code?? its from http://www.cse.yorku.ca/~oz/hash.html
+// FIXME THIS IS NOT MY CODE! its from http://www.cse.yorku.ca/~oz/hash.html
+// My TA said I could use it
 unsigned long
 hash(unsigned char *str)
 {
@@ -35,6 +36,7 @@ int getIndex(char * str, int size) {
 void insertNode(DAG_map * map, BuildSpecNode * node) {
     int hashIndex = getIndex(node->data->target, map->size);
     // FIXME this assumes that spots that arent' used are null
+    // FIXME this also assumes that we will never run out of space
     while (map->map[hashIndex] != NULL) {
         if (strcmp(node->data->target, map->map[hashIndex]) == 0) {
             fprintf(stderr, "Error, same target twice\n");
@@ -61,5 +63,15 @@ void initHashMap(DAG_map * map, int size, BuildSpecList* specs) {
 }
 
 BuildSpecNode * lookup(DAG_map * map, char* target) {
-    return NULL;
+    int hashIndex = getIndex(target, map->size);
+    // FIXME this assumes that spots that arent' used are null
+    // FIXME this also assumes that we will never run out of space
+    while (strcmp(target, map->map[hashIndex]) != 0) {
+        if (map->map[hashIndex] == NULL) {
+            fprintf(stderr, "This target is not in the map!\n");
+            exit(-1);
+        }
+        hashIndex = (hashIndex + 1) % map->size;
+    }
+    return map->map[hashIndex];
 }
