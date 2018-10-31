@@ -4,7 +4,7 @@
 
 void createMap(DAG_map * d_map, int size, BuildSpecList * specs) {
     int arr_size = (int)(size / LOAD_FACTOR);
-    if (NULL == (d_map->map = malloc(sizeof(BuildSpecNode*) * arr_size))) {
+    if (NULL == (d_map->map = calloc(arr_size, sizeof(BuildSpecNode*)))) {
         fprintf(stderr, "Memory allocation error");
         exit(-1);
     }
@@ -28,8 +28,21 @@ hash(unsigned char *str)
 }
 
 int getIndex(char * str, int size) {
+    printf("Hash #: %ld, with mod %d\n", hash( (unsigned char*) str), (int)(hash( (unsigned char*) str) % size));
     // FIXME is this the correct casting?
     return hash( (unsigned char*) str) % size;
+}
+void insertNode(DAG_map * map, BuildSpecNode * node) {
+    int hashIndex = getIndex(node->data->target, map->size);
+    // FIXME this assumes that spots that arent' used are null
+    while (map->map[hashIndex] != NULL) {
+        if (strcmp(node->data->target, map->map[hashIndex]) == 0) {
+            fprintf(stderr, "Error, same target twice\n");
+            exit(-1);
+        }
+        hashIndex = (hashIndex + 1) % map->size;
+    }
+    map->map[hashIndex] = node;
 }
 
 void populateMap(DAG_map * map, BuildSpecList* specs) {
@@ -38,8 +51,7 @@ void populateMap(DAG_map * map, BuildSpecList* specs) {
         node->data = specs->list[i];
         node->tempMark = node->permMark = 0;
         node->children = specs->list[i]->deps;
-        //map->map[i] = node;
-        map->map[getIndex(specs->list[i]->target, map->size)] = node;
+        insertNode(map, node);
     }
 }
 
