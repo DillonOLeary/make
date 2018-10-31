@@ -66,7 +66,7 @@ BuildSpecNode * lookup(DAG_map * map, char* target) {
     int hashIndex = getIndex(target, map->size);
     // FIXME this assumes that spots that arent' used are null
     // FIXME this also assumes that we will never run out of space
-    while (strcmp(target, map->map[hashIndex]) != 0) {
+    while (strcmp(target, map->map[hashIndex]->data->target) != 0) {
         if (map->map[hashIndex] == NULL) {
             fprintf(stderr, "This target is not in the map!\n");
             exit(-1);
