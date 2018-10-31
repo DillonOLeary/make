@@ -28,14 +28,14 @@ typedef struct {
     char* root;
 } DAG_map;
 
-void createMap(DAG_map * d_map, int size, BuildSpecList * specs);
+void createMap(DAG_map * d_map, BuildSpecList * specs);
 
 void populateMap(DAG_map * map, BuildSpecList* specs);
 
 /**
  * This creates the hash map.
  */
-void initHashMap(DAG_map * map, int size, BuildSpecList * specs);
+void initHashMap(DAG_map * map, BuildSpecList * specs);
 
 /**
  * This looks up an item in the map. Returns null if the item 

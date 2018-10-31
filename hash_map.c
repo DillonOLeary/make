@@ -1,9 +1,10 @@
 #include "hash_map.h"
 #include "parser.h"
+#include <string.h>
 #include <stdlib.h>
 
-void createMap(DAG_map * d_map, int size, BuildSpecList * specs) {
-    int arr_size = (int)(size / LOAD_FACTOR);
+void createMap(DAG_map * d_map, BuildSpecList * specs) {
+    int arr_size = (int)(specs->len / LOAD_FACTOR);
     if (NULL == (d_map->map = calloc(arr_size, sizeof(BuildSpecNode*)))) {
         fprintf(stderr, "Memory allocation error");
         exit(-1);
@@ -38,7 +39,7 @@ void insertNode(DAG_map * map, BuildSpecNode * node) {
     // FIXME this assumes that spots that arent' used are null
     // FIXME this also assumes that we will never run out of space
     while (map->map[hashIndex] != NULL) {
-        if (strcmp(node->data->target, map->map[hashIndex]) == 0) {
+        if (strcmp(node->data->target, map->map[hashIndex]->data->target) == 0) {
             fprintf(stderr, "Error, same target twice\n");
             exit(-1);
         }
@@ -57,8 +58,8 @@ void populateMap(DAG_map * map, BuildSpecList* specs) {
     }
 }
 
-void initHashMap(DAG_map * map, int size, BuildSpecList* specs) {
-    createMap(map, size, specs);
+void initHashMap(DAG_map * map, BuildSpecList* specs) {
+    createMap(map, specs);
     populateMap(map, specs);
 }
 

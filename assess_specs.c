@@ -1,4 +1,5 @@
 #include "assess_specs.h"
+#include "hash_map.h"
 
 void visitNode(BuildSpecNode * node, CommandList * cmdList)
 //    if n has a permanent mark then return
@@ -9,9 +10,10 @@ void visitNode(BuildSpecNode * node, CommandList * cmdList)
 //    mark n permanently
 //    add n to head of L
 
-int getCommandList(CommandList * cmdList, BuildSpecNode * root) {
-    Node * root;
-    // FIXME should I create a list or execute commands as I go?
+int getCommandList(CommandList * cmdList, BuildSpecList * list) {
+    DAG_map map;
+    initHashMap(&map, list);
+    // create a list of commands
     visitNode(root, cmdList);
 }
 

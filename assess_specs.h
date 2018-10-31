@@ -20,6 +20,6 @@ typedef struct {
  * check the logic of the spec list provided
  * Returns 0 on success, exits on failure
  */
-int getCommandList(CommandList * cmdList, BuildSpecList * specs);
+int getCommandList(CommandList * cmdList, BuildSpecList * list);
 
 #endif
