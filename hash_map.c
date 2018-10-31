@@ -13,7 +13,9 @@ void createMap(DAG_map * d_map, int size, BuildSpecList * specs) {
 }
 
 void populateMap(DAG_map * map, BuildSpecList* specs) {
-    
+    for(int i=0; i<specs->len; i++) {
+        map->map[i]->data = specs->list[i];
+    }
 }
 
 void initHashMap(DAG_map * map, int size, BuildSpecList* specs) {
