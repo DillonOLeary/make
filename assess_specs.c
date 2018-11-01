@@ -3,7 +3,7 @@
 #include "hash_map.h"
 
 //FIXME should i use const?
-#define INIT_SIZE 10
+#define INIT_SIZE 1
 
 // FIXME THIS CODE IS NOT MY OWN!!! THIS IS FROM
 // https://stackoverflow.com/questions/3536153/c-dynamically-growing-array
@@ -61,7 +61,12 @@ int getCommandList(CommandList * cmdList, BuildSpecList * list) {
     initHashMap(&map, list);
     // create a list of commands
     visitNode(&map, lookup(&map, map.root), cmdList);
-
+    for (unsigned int i=0; i<cmdList->size; i++) {
+        for (unsigned int j=0; cmdList->list[i]->args[j] != 0; j++) {
+            printf("%s", cmdList->list[i]->args[j]);
+        }
+        printf("\nThe %d command above\n", i); 
+    }
     return 0;
 }
 
