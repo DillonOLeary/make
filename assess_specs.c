@@ -1,7 +1,7 @@
 #include "assess_specs.h"
 #include "hash_map.h"
 
-void visitNode(BuildSpecNode * node, CommandList * cmdList)
+void visitNode(BuildSpecNode * node, CommandList * cmdList) {
 //    if n has a permanent mark then return
 //    if n has a temporary mark then stop   (not a DAG)
 //    mark n temporarily
@@ -9,11 +9,13 @@ void visitNode(BuildSpecNode * node, CommandList * cmdList)
 //        visit(m)
 //    mark n permanently
 //    add n to head of L
+}
 
 int getCommandList(CommandList * cmdList, BuildSpecList * list) {
     DAG_map map;
     initHashMap(&map, list);
     // create a list of commands
-    visitNode(root, cmdList);
+    visitNode(lookup(&map, map.root), cmdList);
+    return 0;
 }
 
