@@ -5,7 +5,7 @@
 BuildSpec * createSpec(Command * cmd, char * target, char ** deps, int depsLen) {
     BuildSpec * spec;
     spec = malloc(sizeof(BuildSpec));
-    spec->cmd = cmd;
+    spec->cmds = cmd;
     spec->target = target;
     spec->deps = deps;
     spec->depsLen = depsLen;

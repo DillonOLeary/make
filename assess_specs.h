@@ -12,7 +12,8 @@
 // The list of commands
 typedef struct {
     Command ** list;
-    int len;
+    size_t used;
+    size_t size;
 } CommandList;
 
 /**
