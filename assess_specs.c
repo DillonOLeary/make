@@ -38,7 +38,7 @@ time_t getLastMod(char* filename) {
         fprintf(stderr, "Cannot open target stat file");
         exit(-1);
     }
-    printf("Last mod: %s\n", ctime(&buf.st_mtime));
+    printf("File: %s Last mod: %s\n", filename, ctime(&buf.st_mtime));
     return buf.st_mtime;
 }
 
@@ -49,7 +49,7 @@ time_t getLastMod(char* filename) {
  */
 int targetOlderThanDeps(char* target, char** deps, int depsLen) {
     for (int i=0; i<depsLen; i++) {
-        if (getLastMod(target) < getLastMod(deps[i]))
+        if (getLastMod(target) > getLastMod(deps[i]))
             return 1;
     }
     return 0;

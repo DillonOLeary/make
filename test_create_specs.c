@@ -37,9 +37,9 @@ void createSpecList(BuildSpecList * specs) {
     cmd2->args[2] = "\0";
     cmds[0] = cmd1;
     cmds[1] = cmd2;
-    deps[0] = "b";
-    deps[1] = "c";
-    specs->list[0] = createSpec(cmds,cmdsLen, "a", deps, depsLen);
+    deps[0] = "test_b.txt";
+    deps[1] = "test_c.txt";
+    specs->list[0] = createSpec(cmds,cmdsLen, "test_a.txt", deps, depsLen);
 
     depsLen = 1;
     cmdsLen = 1;
@@ -50,8 +50,8 @@ void createSpecList(BuildSpecList * specs) {
     cmd->args[0] = "r";
     cmd->args[1] = "\0";
     cmds[0] = cmd;
-    deps[0] = "d";
-    specs->list[1] = createSpec(cmds,cmdsLen, "b", deps, depsLen);
+    deps[0] = "test_d.txt";
+    specs->list[1] = createSpec(cmds,cmdsLen, "test_b.txt", deps, depsLen);
 
     depsLen = 1;
     cmdsLen = 1;
@@ -62,8 +62,8 @@ void createSpecList(BuildSpecList * specs) {
     cmd->args[0] = "w";
     cmd->args[1] = "\0";
     cmds[0] = cmd;
-    deps[0] = "b";
-    specs->list[2] = createSpec(cmds, cmdsLen, "c", deps, depsLen);
+    deps[0] = "test_b.txt";
+    specs->list[2] = createSpec(cmds, cmdsLen, "test_c.txt", deps, depsLen);
 
     depsLen = 0;
     cmdsLen = 1;
@@ -73,5 +73,5 @@ void createSpecList(BuildSpecList * specs) {
     cmd->args = malloc(sizeof(char*)*1);
     cmd->args[0] = "\0";
     cmds[0] = cmd;
-    specs->list[3] = createSpec(cmds, cmdsLen, "d", deps, depsLen);
+    specs->list[3] = createSpec(cmds, cmdsLen, "test_d.txt", deps, depsLen);
 }
