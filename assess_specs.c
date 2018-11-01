@@ -2,13 +2,16 @@
 #include "assess_specs.h"
 #include "hash_map.h"
 #include <string.h>
+#include <time.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 //FIXME should i use const?
 #define INIT_SIZE 1
 
 // FIXME THIS CODE IS NOT MY OWN!!! THIS IS FROM
 // https://stackoverflow.com/questions/3536153/c-dynamically-growing-array
-
 void initCmdList(CommandList *a, size_t initialSize) {
   a->list = (Command**)malloc(initialSize * sizeof(Command*));
   a->used = 0;
@@ -27,8 +30,37 @@ void insertCmdList(CommandList *a, Command * element) {
 // FIXME THIS CODE ABOVE IS NOT MY CODE IT IS FROM 
 // https://stackoverflow.com/questions/3536153/c-dynamically-growing-array
 
+// FIXME I didn't copy, but i used this https://stackoverflow.com/questions/31633943/compare-two-times-in-c
+// to help
+time_t getLastMod(char* filename) {
+    struct stat buf;
+    if (-1 == stat(filename, &buf)) {
+        fprintf(stderr, "Cannot open target stat file");
+        exit(-1);
+    }
+    printf("Last mod: %s\n", ctime(&buf.st_mtime));
+    return buf.st_mtime;
+}
+
+/**
+ * Return 1 if the target is older then the deps
+ * TODO should also return true if the target needs
+ * to be recompiled, as in it doesn't exist
+ */
+int targetOlderThanDeps(char* target, char** deps, int depsLen) {
+    for (int i=0; i<depsLen; i++) {
+        if (getLastMod(target) < getLastMod(deps[i]))
+            return 1;
+    }
+    return 0;
+}
+
 // TODO I need a way to add to the command list without knowing
 // how many times, but I know I wont remove
+/**
+ * This funcion visits a node and implements the postorder transversal
+ * it also adds commands to a list if it is appropriate
+ */
 void visitNode(DAG_map * map, BuildSpecNode * node, CommandList * cmdList) {
     printf("Visit node %s\n", node->data->target);
 //    if n has a permanent mark then return
@@ -51,6 +83,11 @@ void visitNode(DAG_map * map, BuildSpecNode * node, CommandList * cmdList) {
     node->permMark = 1;
 //    add n to head of L
     Command** cmds = node->data->cmds;
+    if (targetOlderThanDeps(node->data->target, node->data->deps,
+                node->data->depsLen)) {
+        return;
+    }
+    // TODO fix the case where the node is a file, not a target
     for (int i=0; i<node->data->cmdsLen; i++) {
         insertCmdList(cmdList, cmds[i]);
     }
