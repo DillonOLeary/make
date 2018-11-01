@@ -48,6 +48,12 @@ time_t getLastMod(char* filename) {
  * to be recompiled, as in it doesn't exist
  */
 int targetOlderThanDeps(char* target, char** deps, int depsLen) {
+    // FIXME this isn't right!! it can have no dependencies and not be a file! i can have
+    // no commands and still not be a file! I need some sort of flag...
+    if (depsLen == 0) {
+        printf("%s is a file!!\n", target);
+        return 1;
+    }
     for (int i=0; i<depsLen; i++) {
         if (getLastMod(target) > getLastMod(deps[i]))
             return 1;
