@@ -21,16 +21,17 @@ void createSpecList(BuildSpecList * specs) {
 
     int depsLen = 2;
     deps = malloc(sizeof(char*)*depsLen);
-    cmd = malloc(sizeof(char**)*2);
-    cmd[0] = (Command)malloc(sizeof(char*)*4);
-    cmd[0][0] = "x";
-    cmd[0][1] = "y";
-    cmd[0][2] = "z";
-    cmd[0][3] = "\0";
-    cmd[1] = (Command)malloc(sizeof(char*)*3);
-    cmd[1][0] = "v";
-    cmd[1][1] = "w";
-    cmd[1][2] = "\0";
+    cmd = malloc(sizeof(Command));
+    cmd->args = malloc(sizeof(char**)*2);
+    cmd->args[0] = malloc(sizeof(char*)*4);
+    cmd->args[0][0] = "x";
+    cmd->args[0][1] = "y";
+    cmd->args[0][2] = "z";
+    cmd->args[0][3] = "\0";
+    cmd->args[1] = malloc(sizeof(char*)*3);
+    cmd->args[1][0] = "v";
+    cmd->args[1][1] = "w";
+    cmd->args[1][2] = "\0";
     deps[0] = "b";
     deps[1] = "c";
     specs->list[0] = createSpec(cmd, "a", deps, depsLen);
