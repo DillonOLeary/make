@@ -14,6 +14,7 @@ typedef struct {
 // Info for a build spec
 typedef struct {
     Command ** cmds;
+    int cmdsLen;
     char * target;
     char ** deps;
     int depsLen;

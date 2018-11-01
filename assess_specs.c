@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "assess_specs.h"
 #include "hash_map.h"
+#include <string.h>
 
 //FIXME should i use const?
 #define INIT_SIZE 1
@@ -50,7 +51,7 @@ void visitNode(DAG_map * map, BuildSpecNode * node, CommandList * cmdList) {
     node->permMark = 1;
 //    add n to head of L
     Command** cmds = node->data->cmds;
-    for (int i=0; cmds[i] != 0; i++) {
+    for (int i=0; i<node->data->cmdsLen; i++) {
         insertCmdList(cmdList, cmds[i]);
     }
 
@@ -61,8 +62,8 @@ int getCommandList(CommandList * cmdList, BuildSpecList * list) {
     initHashMap(&map, list);
     // create a list of commands
     visitNode(&map, lookup(&map, map.root), cmdList);
-    for (unsigned int i=0; i<cmdList->size; i++) {
-        for (unsigned int j=0; cmdList->list[i]->args[j] != 0; j++) {
+    for (unsigned int i=0; i<cmdList->used; i++) {
+        for (unsigned int j=0; 0 != strcmp(cmdList->list[i]->args[j],"\0"); j++) {
             printf("%s", cmdList->list[i]->args[j]);
         }
         printf("\nThe %d command above\n", i); 

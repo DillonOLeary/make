@@ -2,10 +2,11 @@
 #include "test_create_specs.h"
 #include <stdlib.h>
 
-BuildSpec * createSpec(Command ** cmds, char * target, char ** deps, int depsLen) {
+BuildSpec * createSpec(Command ** cmds, int cmdsLen, char * target, char ** deps, int depsLen) {
     BuildSpec * spec;
     spec = malloc(sizeof(BuildSpec));
     spec->cmds = cmds;
+    spec->cmdsLen = cmdsLen;
     spec->target = target;
     spec->deps = deps;
     spec->depsLen = depsLen;
@@ -20,8 +21,9 @@ void createSpecList(BuildSpecList * specs) {
     specs->list = malloc(sizeof(BuildSpec*)*specs->len);
 
     int depsLen = 2;
+    int cmdsLen = 2;
     deps = malloc(sizeof(char*)*depsLen);
-    Command ** cmds = malloc(sizeof(Command*)*2);
+    Command ** cmds = malloc(sizeof(Command*)*cmdsLen);
     Command * cmd1 = malloc(sizeof(Command));
     cmd1->args = malloc(sizeof(char*)*4);
     cmd1->args[0] = "x";
@@ -37,38 +39,41 @@ void createSpecList(BuildSpecList * specs) {
     cmds[1] = cmd2;
     deps[0] = "b";
     deps[1] = "c";
-    specs->list[0] = createSpec(cmds, "a", deps, depsLen);
+    specs->list[0] = createSpec(cmds,cmdsLen, "a", deps, depsLen);
 
     depsLen = 1;
+    cmdsLen = 1;
     deps = malloc(sizeof(char*)*depsLen);
-    cmds = malloc(sizeof(Command*)*1);
+    cmds = malloc(sizeof(Command*)*cmdsLen);
     cmd = malloc(sizeof(Command));
     cmd->args = malloc(sizeof(char*)*2);
     cmd->args[0] = "r";
     cmd->args[1] = "\0";
     cmds[0] = cmd;
     deps[0] = "d";
-    specs->list[1] = createSpec(cmds, "b", deps, depsLen);
+    specs->list[1] = createSpec(cmds,cmdsLen, "b", deps, depsLen);
 
     depsLen = 1;
+    cmdsLen = 1;
     deps = malloc(sizeof(char*)*depsLen);
-    cmds = malloc(sizeof(Command*)*1);
+    cmds = malloc(sizeof(Command*)*cmdsLen);
     cmd = malloc(sizeof(Command));
     cmd->args = malloc(sizeof(char*)*2);
     cmd->args[0] = "w";
     cmd->args[1] = "\0";
     cmds[0] = cmd;
     deps[0] = "b";
-    specs->list[2] = createSpec(cmds, "c", deps, depsLen);
+    specs->list[2] = createSpec(cmds, cmdsLen, "c", deps, depsLen);
 
     depsLen = 0;
+    cmdsLen = 1;
     deps = malloc(sizeof(char*)*depsLen);
-    cmds = malloc(sizeof(Command*)*1);
+    cmds = malloc(sizeof(Command*)*cmdsLen);
     cmd = malloc(sizeof(Command));
     cmd->args = malloc(sizeof(char*)*1);
     cmd->args[0] = "\0";
     cmds[0] = cmd;
-    specs->list[3] = createSpec(cmds, "d", deps, depsLen);
+    specs->list[3] = createSpec(cmds, cmdsLen, "d", deps, depsLen);
     /*
 
     depsLen = 0;
