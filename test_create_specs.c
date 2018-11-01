@@ -38,27 +38,30 @@ void createSpecList(BuildSpecList * specs) {
 
     depsLen = 1;
     deps = malloc(sizeof(char*)*depsLen);
-    cmd = malloc(sizeof(char**)*1);
-    cmd[0] = (Command)malloc(sizeof(char*)*2);
-    cmd[0][0] = "r";
-    cmd[0][1] = "\0";
+    cmd = malloc(sizeof(Command));
+    cmd->args = malloc(sizeof(char**)*1);
+    cmd->args[0] = malloc(sizeof(char*)*2);
+    cmd->args[0][0] = "r";
+    cmd->args[0][1] = "\0";
     deps[0] = "d";
     specs->list[1] = createSpec(cmd, "b", deps, depsLen);
 
     depsLen = 1;
     deps = malloc(sizeof(char*)*depsLen);
-    cmd = malloc(sizeof(char**)*1);
-    cmd[0] = (Command)malloc(sizeof(char*)*2);
-    cmd[0][0] = "w";
-    cmd[0][1] = "\0";
+    cmd = malloc(sizeof(Command));
+    cmd->args = malloc(sizeof(char**)*1);
+    cmd->args[0] = malloc(sizeof(char*)*2);
+    cmd->args[0][0] = "w";
+    cmd->args[0][1] = "\0";
     deps[0] = "b";
     specs->list[2] = createSpec(cmd, "c", deps, depsLen);
 
     depsLen = 0;
     deps = malloc(sizeof(char*)*depsLen);
-    cmd = malloc(sizeof(char**)*1);
-    cmd[0] = (Command)malloc(sizeof(char*)*1);
-    cmd[0][0] = "\0";
+    cmd = malloc(sizeof(Command));
+    cmd->args = malloc(sizeof(char**)*1);
+    cmd->args[0] = malloc(sizeof(char*)*1);
+    cmd->args[0][0] = "\0";
     specs->list[3] = createSpec(cmd, "d", deps, depsLen);
     /*
     char** deps = NULL;
