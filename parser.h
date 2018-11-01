@@ -8,8 +8,7 @@
  
 // A command to execute
 typedef struct {
-    // This is a 2 dimentional array
-    char *** args;
+    char ** args;
 } Command;
 
 // Info for a build spec

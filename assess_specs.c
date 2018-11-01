@@ -14,7 +14,7 @@ void initCmdList(CommandList *a, size_t initialSize) {
   a->size = initialSize;
 }
 
-void insertCmdList(CommandList *a, Command* element) {
+void insertCmdList(CommandList *a, Command * element) {
   // a->used is the number of used entries, because a->array[a->used++] updates a->used only *after* the array has been accessed.
   // Therefore a->used can go up to a->size
   if (a->used == a->size) {
@@ -61,6 +61,7 @@ int getCommandList(CommandList * cmdList, BuildSpecList * list) {
     initHashMap(&map, list);
     // create a list of commands
     visitNode(&map, lookup(&map, map.root), cmdList);
+
     return 0;
 }
 
