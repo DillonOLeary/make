@@ -14,7 +14,11 @@ typedef struct {
     Command ** list;
     size_t used;
     size_t size;
-} CommandList;
+} CommandListFinal;
+// FIXME it would be nice to replace this with
+// Ezra command list, this one hold all the commands
+// that need to run whereas Ezras holds the commands
+// for each buildspec
 
 /**
  * This function will create a list of command to execute and

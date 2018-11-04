@@ -69,6 +69,15 @@ BuildSpecNode * lookup(DAG_map * map, char* target) {
     // FIXME this also assumes that we will never run out of space
     while (strcmp(target, map->map[hashIndex]->data->target) != 0) {
         if (map->map[hashIndex] == NULL) {
+            // TODO if an element is searched for that doesn't
+            // exit, instead of throwing an error it might be a
+            // file that isn't a build spec. In that case I need to 
+            // return a dummy node if it exists, if not throw an
+            // error. Maybe I don't even need to check if it exists?
+            // That might be handled elsewhere. Couldn't hurt though.
+            // Also the dummy node probably needs some flag, but
+            // also it might not because it neither has dependencies nor
+            // commands
             fprintf(stderr, "This target is not in the map!\n");
             exit(-1);
         }
