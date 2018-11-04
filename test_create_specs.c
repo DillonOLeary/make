@@ -26,13 +26,13 @@ void createSpecList(BuildSpecList * specs) {
     Command ** cmds = malloc(sizeof(Command*)*cmdsLen);
     Command * cmd1 = malloc(sizeof(Command));
     cmd1->args = malloc(sizeof(char*)*4);
-    cmd1->args[0] = "x";
+    cmd1->args[0] = "test_a_cmd_1";
     cmd1->args[1] = "y";
     cmd1->args[2] = "z";
     cmd1->args[3] = "\0";
     Command * cmd2 = malloc(sizeof(Command));
     cmd2->args = malloc(sizeof(char*)*3);
-    cmd2->args[0] = "v";
+    cmd2->args[0] = "test_a_cmd_2";
     cmd2->args[1] = "w";
     cmd2->args[2] = "\0";
     cmds[0] = cmd1;
@@ -47,7 +47,7 @@ void createSpecList(BuildSpecList * specs) {
     cmds = malloc(sizeof(Command*)*cmdsLen);
     cmd = malloc(sizeof(Command));
     cmd->args = malloc(sizeof(char*)*2);
-    cmd->args[0] = "r";
+    cmd->args[0] = "test_b_cmd";
     cmd->args[1] = "\0";
     cmds[0] = cmd;
     deps[0] = "test_d.txt";
@@ -59,7 +59,7 @@ void createSpecList(BuildSpecList * specs) {
     cmds = malloc(sizeof(Command*)*cmdsLen);
     cmd = malloc(sizeof(Command));
     cmd->args = malloc(sizeof(char*)*2);
-    cmd->args[0] = "w";
+    cmd->args[0] = "test_c_cmd";
     cmd->args[1] = "\0";
     cmds[0] = cmd;
     deps[0] = "test_b.txt";
