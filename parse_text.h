@@ -12,6 +12,8 @@ char **get_target_list();
 
 char **get_deps();
 
+BuildSpecList parse_makefile(bool fflag, char *filename);
+
 char *get_file_line(FILE *fp, bool *isEnd);
 
 void parse_line(char *file_line, BuildSpecList *bsl);
