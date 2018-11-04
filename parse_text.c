@@ -9,6 +9,17 @@
 #define MAX_LINE_LENGTH 512
 
 
+int getBuildSpecList(BuildSpecList *specs, FILE *fp) {
+    char *file_line;
+    bool isEnd = false;
+    while (!isEnd) {
+        file_line = get_file_line(fp, &isEnd);
+        parse_line(file_line, specs);
+    }
+
+    return 0;
+}
+
 char **tokenize(char *line, int *depsLen) {
     /* Allocate a buffer for ind. words and one for the list. They both need
      * to be max length in case our line is one really long word */
@@ -19,12 +30,6 @@ char **tokenize(char *line, int *depsLen) {
     int tokenCount = 0;
     int stringLength = 0;
     
-    for (i = 0; line[i] != '\n' && line[i] != EOF; i++){ 
-        printf("%c",line[i]);
-    }
-
-    printf("\n");
-
     for (i = 0; i < MAX_LINE_LENGTH; i++) { 
         buf[stringLength] = line[i];
         if (buf[stringLength] == ' ' || buf[stringLength] == '\n' || buf[stringLength] == EOF) {
@@ -43,7 +48,6 @@ char **tokenize(char *line, int *depsLen) {
     for (i = 0; i < tokenCount; i++) {
         printf("token %d: %s\n", i, tokenList[i]);
     }
-
     return tokenList;
 }
 
@@ -64,20 +68,18 @@ void parse_line(char *line, BuildSpecList *buildSpecList) {
         append_cmd(buildSpec, cmd);
         return;
     }
-    
-    //currWordType = command;
     tokens = tokenize(line, &cmdsLen);
     BuildSpec *buildSpec = malloc(sizeof(BuildSpec));
-    strcpy(buildSpec->target, tokens[0]);
-
+    buildSpec->target = tokens[0];
     append_build_spec(buildSpecList, buildSpec);
-    
     for (i = 1; i < cmdsLen; i++) {
         tokens[i - 1] = tokens[i];
     }
-
     buildSpec->deps = tokens;
     buildSpec->depsLen = cmdsLen - 1;
+    buildSpec->cmds = malloc(sizeof(CommandList));
+    buildSpec->cmds->len = 0;
+    printf("here2");
     free(line);
 }
 
@@ -85,6 +87,7 @@ char *get_file_line(FILE *fp, bool *isEnd) {
     char *input = malloc(MAX_LINE_LENGTH * sizeof(char));
     int i;
     char c;
+
     for (i = 0; i < MAX_LINE_LENGTH; i++) {
         input[i] = fgetc(fp);
         if (input[i] == '\n' || input[i] == EOF) {
@@ -93,8 +96,6 @@ char *get_file_line(FILE *fp, bool *isEnd) {
         }
     }
 }
-
-
 
 FILE *open_makefile(bool fflag, char *filename) {
     FILE **fptr = malloc(sizeof(FILE *));
@@ -117,7 +118,6 @@ FILE *open_makefile(bool fflag, char *filename) {
             }
         }
     }
-
     return *fptr;
 }
 
