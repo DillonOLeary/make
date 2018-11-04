@@ -7,17 +7,19 @@
 #include <stdio.h>
  
 // A command to execute
-typedef struct {
+typedef struct Command {
     char ** args;
+    struct Command * nxtCmd;
 } Command;
 
 // Info for a build spec
-typedef struct {
+typedef struct BuildSpec {
     Command ** cmds;
     int cmdsLen;
     char * target;
     char ** deps;
     int depsLen;
+    struct BuildSpec * nxtBuildSpec;
 } BuildSpec;
 
 // A list of build specs
