@@ -83,6 +83,8 @@ void visitNode(DAG_map * map, BuildSpecNode * node, CommandList * cmdList) {
 //    for each node m with an edge from n to m do
 //        visit(m)
     for (int i=0; i<node->data->depsLen; i++) {
+        // FIXME here lookup should return a fake node for that file
+        // and chek if the file exists. that file has no deps or commands
         visitNode(map, lookup(map, node->data->deps[i]), cmdList);
     }
 //    mark n permanently
