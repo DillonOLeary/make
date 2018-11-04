@@ -1,5 +1,6 @@
 #include "parse_text.h"
 #include "parser.h"
+#include "list_utils.h"
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -47,36 +48,36 @@ char **tokenize(char *line, int *depsLen) {
 }
 
 
-void parse_line(char *line, BuildSpecList *buildSpecList, int currBSindex, int currCmdIndex) {
+void parse_line(char *line, BuildSpecList *buildSpecList) {
     char c = line[0];
     int i;
     int cmdsLen;
     char **tokens;
     if (c == '#') return; 
     // Must be a line of commands
-    //if (c == '\t') {
-        //buildSpecList->list[currBuildSpec]->cmds[currCmdIndex] = ;
-        //buildSpecList->list[currBuildSpec]->cmds[currCmdIndex]->args = tokenize(line, &cmdsLen);
-        //buildSpec->cmdsLen += cmdsLen;
-        //return;
-    //}
+    if (c == '\t') {
+        BuildSpec *buildSpec = get_last_build_spec(buildSpecList);
+        Command *cmd = malloc(sizeof(Command));
+        cmd->args = tokenize(line, &cmdsLen);
+        cmd->argc = cmdsLen;
+        buildSpec->cmdlen++;
+        append_cmd(buildSpec, cmd);
+        return;
+    }
     
     //currWordType = command;
     tokens = tokenize(line, &cmdsLen);
+    BuildSpec *buildSpec = malloc(sizeof(BuildSpec));
+    strcpy(buildSpec->target, tokens[0]);
 
-    for (i = 0; i < MAX_LINE_LENGTH; i++) {
-        if (c == '\0') {
-            break;
-        }
-        
-        if (c == ':') {
-
-            buildSpecList->list[currBSindex]->target = tokens[0];
-            
-            break;
-        }
+    append_build_spec(buildSpecList, buildSpec);
+    
+    for (i = 1; i < cmdsLen; i++) {
+        tokens[i - 1] = tokens[i];
     }
 
+    buildSpec->deps = tokens;
+    buildSpec->depsLen = cmdsLen - 1;
     free(line);
 }
 

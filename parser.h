@@ -9,13 +9,20 @@
 // A command to execute
 typedef struct Command {
     char ** args;
+    int argc;
     struct Command * nxtCmd;
 } Command;
 
+typedef struct CommandList {
+    Command *lstCmd;
+    Command *frstCmd;
+    int len;
+} CommandList;
+
 // Info for a build spec
 typedef struct BuildSpec {
-    Command ** cmds;
-    int cmdsLen;
+    CommandList *cmds;
+    int cmdlen;
     char * target;
     char ** deps;
     int depsLen;
@@ -24,7 +31,8 @@ typedef struct BuildSpec {
 
 // A list of build specs
 typedef struct {
-    BuildSpec ** list;
+    BuildSpec * frstBS;
+    BuildSpec * lstBS;
     int len;
 } BuildSpecList;
 

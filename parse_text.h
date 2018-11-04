@@ -14,6 +14,6 @@ char **get_deps();
 
 char *get_file_line(FILE *fp, bool *isEnd);
 
-void parse_line(char *file_line, BuildSpecList *bsl, int currBSindex, int currCmdIndex);
+void parse_line(char *file_line, BuildSpecList *bsl);
 
 #endif
