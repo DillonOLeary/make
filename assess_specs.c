@@ -12,13 +12,13 @@
 
 // FIXME THIS CODE IS NOT MY OWN!!! THIS IS FROM
 // https://stackoverflow.com/questions/3536153/c-dynamically-growing-array
-void initCmdList(CommandList *a, size_t initialSize) {
+void initCmdList(CommandListFinal *a, size_t initialSize) {
   a->list = (Command**)malloc(initialSize * sizeof(Command*));
   a->used = 0;
   a->size = initialSize;
 }
 
-void insertCmdList(CommandList *a, Command * element) {
+void insertCmdList(CommandListFinal *a, Command * element) {
   // a->used is the number of used entries, because a->array[a->used++] updates a->used only *after* the array has been accessed.
   // Therefore a->used can go up to a->size
   if (a->used == a->size) {
@@ -67,7 +67,7 @@ int targetOlderThanDeps(char* target, char** deps, int depsLen) {
  * This funcion visits a node and implements the postorder transversal
  * it also adds commands to a list if it is appropriate
  */
-void visitNode(DAG_map * map, BuildSpecNode * node, CommandList * cmdList) {
+void visitNode(DAG_map * map, BuildSpecNode * node, CommandListFinal * cmdList) {
     printf("Visit node %s\n", node->data->target);
 //    if n has a permanent mark then return
     if (node->permMark == 1) {
@@ -96,12 +96,12 @@ void visitNode(DAG_map * map, BuildSpecNode * node, CommandList * cmdList) {
         return;
     }
     // TODO fix the case where the node is a file, not a target
-    for (int i=0; i<node->data->cmdsLen; i++) {
+    for (int i=0; i<node->data->cmdlen; i++) {
         insertCmdList(cmdList, cmds[i]);
     }
 
 }
-int getCommandList(CommandList * cmdList, BuildSpecList * list) {
+int getCommandList(CommandListFinal * cmdList, BuildSpecList * list) {
     initCmdList(cmdList, INIT_SIZE);
     DAG_map map;
     initHashMap(&map, list);
