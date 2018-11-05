@@ -27,8 +27,6 @@ void append_cmd(BuildSpec *bs, Command *cmd) {
         bs->cmds->lstCmd = cmd;
     }
     bs->cmds->len++;
-
-    printf("here2\n");
 }
 
 
