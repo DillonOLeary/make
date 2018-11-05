@@ -50,7 +50,6 @@ char **tokenize(char *line, int *depsLen) {
             continue;
         }
         stringLength++; 
-        //printf("char: %c\n", buf[stringLength - 1]);  // Little bit of debug
     }
 
 //    for (i = 0; i < tokenCount; i++) {
@@ -83,6 +82,12 @@ void parse_line(char *line, BuildSpecList *buildSpecList) {
     
     BuildSpec *buildSpec = malloc(sizeof(BuildSpec));
     buildSpec->target = tokens[0];
+    for (i = 0; '\0' != tokens[0][i]; i++);
+    if (tokens[0][i - 1] != ':') {
+    // Check if its a valid target
+        free(buildSpec);
+        return;
+    }
     append_build_spec(buildSpecList, buildSpec);
     for (i = 1; i < cmdsLen; i++) {
         tokens[i - 1] = tokens[i];

@@ -17,3 +17,5 @@ t4:
 
 targ3:    
 	should be empty
+
+targ
