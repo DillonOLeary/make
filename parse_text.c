@@ -12,9 +12,10 @@
 int getBuildSpecList(BuildSpecList *specs, FILE *fp) {
     char *file_line;
     bool isEnd = false;
+    int lineNum = 1;
     while (!isEnd) {
         file_line = get_file_line(fp, &isEnd);
-        parse_line(file_line, specs);
+        parse_line(file_line, specs, lineNum++);
     }
     return 0;
 }
@@ -59,8 +60,14 @@ char **tokenize(char *line, int *depsLen) {
     return tokenList;
 }
 
+bool is_empty(char *line) {
+    for (int i = 0; line[i] != '\n' && line[i] != EOF; i++) {
+        if (line[i] != ' ') return false;
+    }
+    return true;
+}
 
-void parse_line(char *line, BuildSpecList *buildSpecList) {
+void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
     char c = line[0];
     int i;
     int cmdsLen;
@@ -76,7 +83,13 @@ void parse_line(char *line, BuildSpecList *buildSpecList) {
         append_cmd_to_buildspec(buildSpec, cmd);
         return;
     }
-    if (c == '\n' || c == EOF || c == ' ') return;  // Empty Line
+    if (c == '\n' || c == EOF) return;  // Need a further check
+    if (c == ' ') {
+        if (!is_empty(line)) {
+            printf("Error line:%d has invalid spacing\n", lineNum);
+            exit(1);
+        }
+    }
     tokens = tokenize(line, &cmdsLen);
     
     BuildSpec *buildSpec = malloc(sizeof(BuildSpec));

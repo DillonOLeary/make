@@ -33,12 +33,12 @@ int main(int argc, char **argv) {
     BuildSpec *currBuildSpec = bsl.frstBS;
     Command   *currCmd;
     for (i = 0; i < bsl.len; i++) {
-        printf("BUILD SPEC #%d  || TARGET: %s   || NUM CMDS: %d   || NUM DEPS: %d \n", i, currBuildSpec->target, currBuildSpec->cmdlen, currBuildSpec->depsLen);
+        printf("BUILD SPEC #%d  || TARGET: %s   || NUM CMDS: %d   || NUM DEPS: %d \n", i, currBuildSpec->target, currBuildSpec->cmds->len, currBuildSpec->depsLen);
         for (j = 0; j < currBuildSpec->depsLen; j++) {
             printf("\tDEP #%d: %s\n", j, currBuildSpec->deps[j]);
         }
-        if (currBuildSpec->cmdlen >= 1) currCmd = currBuildSpec->cmds->frstCmd;
-        for (j = 0; j < currBuildSpec->cmdlen; j++) {
+        if (currBuildSpec->cmds->len >= 1) currCmd = currBuildSpec->cmds->frstCmd;
+        for (j = 0; j < currBuildSpec->cmds->len; j++) {
             printf("\tCMD #%d\n", j);
             for (k = 0; k < currCmd->argc; k++) {
                 printf("\t\tARGV[%d] == %s\n",k, currCmd->argv[k]);
