@@ -13,7 +13,7 @@ int main() {
     specs.len = 0;
     CommandList cmdList;
     // TODO read in the args
-    fp = open_makefile(0, "makefile");
+    fp = open_makefile(1, "test.make");
     getBuildSpecList(&specs, fp);
     getCommandList(&cmdList, &specs);
 }
