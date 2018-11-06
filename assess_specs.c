@@ -33,7 +33,7 @@
 time_t getLastMod(char* filename) {
     struct stat buf;
     if (-1 == stat(filename, &buf)) {
-        fprintf(stderr, "Cannot open target stat file");
+        fprintf(stderr, "Cannot open target stat file, file many not exist");
         exit(-1);
     }
     printf("File: %s Last mod: %s\n", filename, ctime(&buf.st_mtime));
@@ -50,7 +50,8 @@ int targetOlderThanDeps(char* target, char** deps, int depsLen) {
     // no commands and still not be a file! I need some sort of flag...
     if (depsLen == 0) {
         printf("%s is a file!!\n", target);
-        return 1;
+        // FIXME return 0 or 1??
+        return 0;
     }
     for (int i=0; i<depsLen; i++) {
         if (getLastMod(target) > getLastMod(deps[i]))
