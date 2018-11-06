@@ -68,19 +68,54 @@ bool is_empty(char *line) {
     return true;
 }
 
+char* getIOFilename(char** cmdTolkens, int index) {
+    if(cmdTolk
+    // FIXME make sure the correct number of things are removed from
+    // cmdTolkens. maybe just make them balnk and then scan for blanks?
+}
+
+/**
+ * This will read through the command tolkens
+ * and set the redirects and set the length 
+ * equal to the size of the array without the
+ * redirects. Will throw an error if the redirect
+ * is attempted to be set twice
+ */
+void setRedirects(char** cmdTolkens, Command* cmd) {
+    for (int i=0; cmdTolkens[i] != NULL; i++) {
+        if (cmdTolkens[i][0] == "<") {
+            // set in
+            if (1 == cmd->inputSet) {
+                fprintf(stderr, "Cannot set the input twice!\n");
+                exit(-1);
+            }
+            cmd->inputSet == 1;
+            FILE* infp = fopen(getIOFilename(cmdTolkens, i), "r");
+        }
+    }
+}
+
 void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
     char c = line[0];
     int i;
     int cmdsLen;
     char **tokens;
-    
+
+    //FIXME this must return an error if there is a null char in the line
+    // or if the line is too long    
     if (c == '#') return; 
     // Must be a line of commands
     if (c == '\t') {
         BuildSpec *buildSpec = get_last_build_spec(buildSpecList);
         Command *cmd = malloc(sizeof(Command));
-        cmd->argv = tokenize(line, &cmdsLen);
-        cmd->argc = cmdsLen;
+        char** cmdTolkens = tokenize(line, &cmdsLen);
+        cmd->output = stdout;
+        cmd->input = stdin;
+        cmd->inputSet = 0;
+        cmd->outputSet = 0;
+        //cmd->argv = 
+        setRedirects(cmdTolkens, cmd);
+        // cmd->argc = cmdsLen;
         append_cmd_to_buildspec(buildSpec, cmd);
         return;
     }

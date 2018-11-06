@@ -11,6 +11,12 @@ typedef struct Command {
     char ** argv;
     int argc;
     struct Command * nxtCmd;
+    FILE* output;
+    // the set ints are boolean flags, input
+    // and output should only be set once
+    int outputSet;
+    int inputSet;
+    FILE* input;
 } Command;
 
 typedef struct CommandList {
