@@ -96,20 +96,23 @@ void visitNode(DAG_map * map, BuildSpecNode * node, CommandListFinal * cmdList) 
         return;
     }
     // TODO fix the case where the node is a file, not a target
-    for (int i=0; i<node->data->cmdlen; i++) {
-        insertCmdList(cmdList, cmds[i]);
+    Command* currCmd = node->data->cmdList->frstCmd;
+    for (int i=0; i<node->data->cmdList->len; i++) {
+        append_cmd_cmdList(cmdList, currCmd);
+        currCmd = next_cmd(currCmd);
     }
 
 }
-int getCommandList(CommandListFinal * cmdList, BuildSpecList * list) {
+int getCommandList(CommandList * cmdList, BuildSpecList * list) {
     initCmdList(cmdList, INIT_SIZE);
     DAG_map map;
     initHashMap(&map, list);
     // create a list of commands
     visitNode(&map, lookup(&map, map.root), cmdList);
-    for (unsigned int i=0; i<cmdList->used; i++) {
-        for (unsigned int j=0; 0 != strcmp(cmdList->list[i]->argv[j],"\0"); j++) {
-            printf("%s", cmdList->list[i]->argv[j]);
+    Command* currCmd = cmdList->frstCmd;
+    for (unsigned int i=0; i<cmdList->len; i++) {
+        for (unsigned int j=0; 0 != currCmd->argv[j]; j++) {
+            printf("%s", currCmd->argv[j]);
         }
         printf("\nThe %d command above\n", i); 
     }

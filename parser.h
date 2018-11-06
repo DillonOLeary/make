@@ -22,7 +22,6 @@ typedef struct CommandList {
 // Info for a build spec
 typedef struct BuildSpec {
     CommandList *cmds;
-    int cmdlen;
     char * target;
     char ** deps;
     int depsLen;
