@@ -108,8 +108,8 @@ int getCommandList(CommandListFinal * cmdList, BuildSpecList * list) {
     // create a list of commands
     visitNode(&map, lookup(&map, map.root), cmdList);
     for (unsigned int i=0; i<cmdList->used; i++) {
-        for (unsigned int j=0; 0 != strcmp(cmdList->list[i]->args[j],"\0"); j++) {
-            printf("%s", cmdList->list[i]->args[j]);
+        for (unsigned int j=0; 0 != strcmp(cmdList->list[i]->argv[j],"\0"); j++) {
+            printf("%s", cmdList->list[i]->argv[j]);
         }
         printf("\nThe %d command above\n", i); 
     }

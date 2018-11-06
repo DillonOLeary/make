@@ -40,5 +40,6 @@ test_parse: parser.h parse_text.h parse_text.c list_utils.c list_utils.h parse_t
 
 clean:
 	rm test_hash
+	rm *.o
 	rm test_assess_specs
 	rm test_parse
