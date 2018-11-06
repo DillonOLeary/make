@@ -10,6 +10,7 @@
 int main() {
     FILE * fp;
     BuildSpecList specs;
+    specs.len = 0;
     CommandList cmdList;
     // TODO read in the args
     fp = open_makefile(0, "makefile");
