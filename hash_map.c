@@ -49,12 +49,14 @@ void insertNode(DAG_map * map, BuildSpecNode * node) {
 }
 
 void populateMap(DAG_map * map, BuildSpecList* specs) {
+    BuildSpec* currSpec = BuildSpeclist->frstBS;
     for(int i=0; i<specs->len; i++) {
         BuildSpecNode * node = malloc(sizeof(BuildSpecNode));
-        node->data = specs->list[i];
+        node->data = currSpec;
         node->tempMark = node->permMark = 0;
-        node->children = specs->list[i]->deps;
+        node->children = currSpec->deps;
         insertNode(map, node);
+        currSpec = next_BS(currSpec);
     }
 }
 
