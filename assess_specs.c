@@ -1,14 +1,12 @@
 #include <stdlib.h>
 #include "assess_specs.h"
 #include "hash_map.h"
+#include "list_utils.h"
 #include <string.h>
 #include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-
-//FIXME should i use const?
-#define INIT_SIZE 1
 
 // FIXME THIS CODE IS NOT MY OWN!!! THIS IS FROM
 // https://stackoverflow.com/questions/3536153/c-dynamically-growing-array
@@ -90,28 +88,28 @@ void visitNode(DAG_map * map, BuildSpecNode * node, CommandList * cmdList) {
 //    mark n permanently
     node->permMark = 1;
 //    add n to head of L
-    Command** cmds = node->data->cmds;
+    //Command** cmds = node->data->cmds;
     if (targetOlderThanDeps(node->data->target, node->data->deps,
                 node->data->depsLen)) {
         return;
     }
     // TODO fix the case where the node is a file, not a target
-    Command* currCmd = node->data->cmdList->frstCmd;
-    for (int i=0; i<node->data->cmdList->len; i++) {
-        append_cmd_cmdList(cmdList, currCmd);
+    Command* currCmd = node->data->cmds->frstCmd;
+    for (int i=0; i<node->data->cmds->len; i++) {
+        append_cmd_to_cmdlist(cmdList, currCmd);
         currCmd = next_cmd(currCmd);
     }
 
 }
 int getCommandList(CommandList * cmdList, BuildSpecList * list) {
-    initCmdList(cmdList, INIT_SIZE);
+    init_cmd_list(cmdList);
     DAG_map map;
     initHashMap(&map, list);
     // create a list of commands
     visitNode(&map, lookup(&map, map.root), cmdList);
     Command* currCmd = cmdList->frstCmd;
-    for (unsigned int i=0; i<cmdList->len; i++) {
-        for (unsigned int j=0; 0 != currCmd->argv[j]; j++) {
+    for (int i=0; i<cmdList->len; i++) {
+        for (int j=0; 0 != currCmd->argv[j]; j++) {
             printf("%s", currCmd->argv[j]);
         }
         printf("\nThe %d command above\n", i); 

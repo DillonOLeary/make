@@ -51,3 +51,7 @@ Command *next_cmd (Command *cmd) {
 BuildSpec *next_BS (BuildSpec *bs) {
     return bs->nxtBuildSpec;
 }
+
+void init_cmd_list(CommandList *cmdList) {
+    cmdList->len = 0;
+}
