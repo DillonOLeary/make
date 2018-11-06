@@ -8,32 +8,10 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-// FIXME THIS CODE IS NOT MY OWN!!! THIS IS FROM
-// https://stackoverflow.com/questions/3536153/c-dynamically-growing-array
-//void initCmdList(CommandList *a, size_t initialSize) {
-//  a->list = (Command**)malloc(initialSize * sizeof(Command*));
-//  a->used = 0;
-//  a->size = initialSize;
-//}
-
-//void insertCmdList(CommandList *a, Command * element) {
-  // a->used is the number of used entries, because a->array[a->used++] updates a->used only *after* the array has been accessed.
-  // Therefore a->used can go up to a->size
-//  if (a->used == a->size) {
-//    a->size *= 2;
-//    a->list = (Command**)realloc(a->list, a->size * sizeof(Command*));
-//  }
-//  a->list[a->used++] = element;
-//}
-// FIXME THIS CODE ABOVE IS NOT MY CODE IT IS FROM 
-// https://stackoverflow.com/questions/3536153/c-dynamically-growing-array
-
-// FIXME I didn't copy, but i used this https://stackoverflow.com/questions/31633943/compare-two-times-in-c
-// to help
 time_t getLastMod(char* filename) {
     struct stat buf;
     if (-1 == stat(filename, &buf)) {
-        fprintf(stderr, "Cannot open target stat file, file many not exist");
+        fprintf(stderr, "Cannot open target stat file, file many not exist\n");
         exit(-1);
     }
     printf("File: %s Last mod: %s\n", filename, ctime(&buf.st_mtime));
