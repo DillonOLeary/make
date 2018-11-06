@@ -13,7 +13,7 @@ void createMap(DAG_map * d_map, BuildSpecList * specs) {
     //d_map->size = size;
     d_map->size = arr_size;
     // FIXME assert the first element is the root
-    d_map->root = specs->frstBS->target;
+    d_map->root = specs->root;
 }
 
 // FIXME THIS IS NOT MY CODE! its from http://www.cse.yorku.ca/~oz/hash.html

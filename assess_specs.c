@@ -38,8 +38,6 @@ int targetOlderThanDeps(char* target, char** deps, int depsLen) {
     return 0;
 }
 
-// TODO I need a way to add to the command list without knowing
-// how many times, but I know I wont remove
 /**
  * This funcion visits a node and implements the postorder transversal
  * it also adds commands to a list if it is appropriate
@@ -60,8 +58,6 @@ void visitNode(DAG_map * map, BuildSpecNode * node, CommandList * cmdList) {
 //    for each node m with an edge from n to m do
 //        visit(m)
     for (int i=0; i<node->data->depsLen; i++) {
-        // FIXME here lookup should return a fake node for that file
-        // and chek if the file exists. that file has no deps or commands
         visitNode(map, lookup(map, node->data->deps[i]), cmdList);
     }
 //    mark n permanently
@@ -72,7 +68,6 @@ void visitNode(DAG_map * map, BuildSpecNode * node, CommandList * cmdList) {
                 node->data->depsLen)) {
         return;
     }
-    // TODO fix the case where the node is a file, not a target
     Command* currCmd = node->data->cmds->frstCmd;
     for (int i=0; i<node->data->cmds->len; i++) {
         append_cmd_to_cmdlist(cmdList, currCmd);
