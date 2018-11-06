@@ -1,5 +1,6 @@
 #include "hash_map.h"
 #include "parser.h"
+#include "list_utils.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -12,7 +13,7 @@ void createMap(DAG_map * d_map, BuildSpecList * specs) {
     //d_map->size = size;
     d_map->size = arr_size;
     // FIXME assert the first element is the root
-    d_map->root = specs->list[0]->target;
+    d_map->root = specs->frstBS->target;
 }
 
 // FIXME THIS IS NOT MY CODE! its from http://www.cse.yorku.ca/~oz/hash.html
@@ -49,7 +50,7 @@ void insertNode(DAG_map * map, BuildSpecNode * node) {
 }
 
 void populateMap(DAG_map * map, BuildSpecList* specs) {
-    BuildSpec* currSpec = BuildSpeclist->frstBS;
+    BuildSpec* currSpec = specs->frstBS;
     for(int i=0; i<specs->len; i++) {
         BuildSpecNode * node = malloc(sizeof(BuildSpecNode));
         node->data = currSpec;
