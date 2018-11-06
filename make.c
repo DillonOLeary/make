@@ -11,10 +11,13 @@ int main() {
     FILE * fp;
     BuildSpecList specs;
     // FIXME set root to be whatever is passed in by the command line
+    // if there is something in the command then set it to that
+    // otherwise it defaults to the first
     specs.len = 0;
     CommandList cmdList;
     // TODO read in the args
     fp = open_makefile(1, "test.make3");
     getBuildSpecList(&specs, fp);
+    specs.root = specs.frstBS->target;
     getCommandList(&cmdList, &specs);
 }
