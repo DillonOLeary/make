@@ -1,6 +1,6 @@
 CC = gcc
 WARNING_FLAGS = -Wall -Wextra
-EXE = prodcomm
+EXE = 537make
 SCAN_BUILD_DIR = scan-build-out
 
 make: make.o assess_specs.o hash_map.o parse_text.o list_utils.o
