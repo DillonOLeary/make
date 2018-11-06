@@ -73,7 +73,7 @@ void parse_line(char *line, BuildSpecList *buildSpecList) {
         Command *cmd = malloc(sizeof(Command));
         cmd->argv = tokenize(line, &cmdsLen);
         cmd->argc = cmdsLen;
-        append_cmd(buildSpec, cmd);
+        append_cmd_to_buildspec(buildSpec, cmd);
         return;
     }
     if (c == '\n' || c == EOF || c == ' ') return;  // Empty Line
