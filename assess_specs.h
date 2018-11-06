@@ -10,11 +10,11 @@
 #define __assess__specs_h__
 #include "parser.h"
 // The list of commands
-typedef struct {
-    Command ** list;
-    size_t used;
-    size_t size;
-} CommandListFinal;
+//typedef struct {
+//    Command ** list;
+//    size_t used;
+//    size_t size;
+//} CommandListFinal;
 // FIXME it would be nice to replace this with
 // Ezra command list, this one hold all the commands
 // that need to run whereas Ezras holds the commands
@@ -25,6 +25,6 @@ typedef struct {
  * check the logic of the spec list provided
  * Returns 0 on success, exits on failure
  */
-int getCommandList(CommandListFinal * cmdList, BuildSpecList * list);
+int getCommandList(CommandList * cmdList, BuildSpecList * list);
 
 #endif

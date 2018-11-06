@@ -12,21 +12,21 @@
 
 // FIXME THIS CODE IS NOT MY OWN!!! THIS IS FROM
 // https://stackoverflow.com/questions/3536153/c-dynamically-growing-array
-void initCmdList(CommandListFinal *a, size_t initialSize) {
-  a->list = (Command**)malloc(initialSize * sizeof(Command*));
-  a->used = 0;
-  a->size = initialSize;
-}
+//void initCmdList(CommandList *a, size_t initialSize) {
+//  a->list = (Command**)malloc(initialSize * sizeof(Command*));
+//  a->used = 0;
+//  a->size = initialSize;
+//}
 
-void insertCmdList(CommandListFinal *a, Command * element) {
+//void insertCmdList(CommandList *a, Command * element) {
   // a->used is the number of used entries, because a->array[a->used++] updates a->used only *after* the array has been accessed.
   // Therefore a->used can go up to a->size
-  if (a->used == a->size) {
-    a->size *= 2;
-    a->list = (Command**)realloc(a->list, a->size * sizeof(Command*));
-  }
-  a->list[a->used++] = element;
-}
+//  if (a->used == a->size) {
+//    a->size *= 2;
+//    a->list = (Command**)realloc(a->list, a->size * sizeof(Command*));
+//  }
+//  a->list[a->used++] = element;
+//}
 // FIXME THIS CODE ABOVE IS NOT MY CODE IT IS FROM 
 // https://stackoverflow.com/questions/3536153/c-dynamically-growing-array
 
@@ -67,7 +67,7 @@ int targetOlderThanDeps(char* target, char** deps, int depsLen) {
  * This funcion visits a node and implements the postorder transversal
  * it also adds commands to a list if it is appropriate
  */
-void visitNode(DAG_map * map, BuildSpecNode * node, CommandListFinal * cmdList) {
+void visitNode(DAG_map * map, BuildSpecNode * node, CommandList * cmdList) {
     printf("Visit node %s\n", node->data->target);
 //    if n has a permanent mark then return
     if (node->permMark == 1) {
