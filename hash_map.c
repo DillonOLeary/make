@@ -13,7 +13,7 @@ void createMap(DAG_map * d_map, BuildSpecList * specs) {
     //d_map->size = size;
     d_map->size = arr_size;
     // FIXME assert the first element is the root
-    d_map->root = specs->frstBS->target;
+    d_map->root = specs->root;
 }
 
 // FIXME THIS IS NOT MY CODE! its from http://www.cse.yorku.ca/~oz/hash.html
@@ -66,11 +66,27 @@ void initHashMap(DAG_map * map, BuildSpecList* specs) {
     populateMap(map, specs);
 }
 
+BuildSpecNode * createDummyNode(char* target) {
+    BuildSpecNode* node = calloc(1, sizeof(BuildSpecNode));
+    BuildSpec* spec = calloc(1, sizeof(BuildSpec));
+    spec->cmds = calloc(1, sizeof(CommandList));
+    spec->target = target;
+    spec->depsLen = 0;
+    spec->cmds->len = 0;
+    node->data = spec;
+    return node;
+}
+
 BuildSpecNode * lookup(DAG_map * map, char* target) {
     int hashIndex = getIndex(target, map->size);
     // FIXME this assumes that spots that arent' used are null
     // FIXME this also assumes that we will never run out of space
+    if (map->map[hashIndex] == NULL) {
+        fprintf(stdout, "This target %s is not in the map! Assume it is a file\n", target);
+        return createDummyNode(target);
+    }
     while (strcmp(target, map->map[hashIndex]->data->target) != 0) {
+        hashIndex = (hashIndex + 1) % map->size;
         if (map->map[hashIndex] == NULL) {
             // TODO if an element is searched for that doesn't
             // exit, instead of throwing an error it might be a
@@ -81,10 +97,9 @@ BuildSpecNode * lookup(DAG_map * map, char* target) {
             // Also the dummy node probably needs some flag, but
             // also it might not because it neither has dependencies nor
             // commands
-            fprintf(stderr, "This target is not in the map!\n");
-            exit(-1);
+            fprintf(stdout, "This target %s is not in the map! Assume it is a file\n", target);
+            return createDummyNode(target);
         }
-        hashIndex = (hashIndex + 1) % map->size;
     }
     return map->map[hashIndex];
 }

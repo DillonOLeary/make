@@ -33,6 +33,7 @@ typedef struct {
     BuildSpec * frstBS;
     BuildSpec * lstBS;
     int len;
+    char* root;
 } BuildSpecList;
 
 /** This will parse the text and create the

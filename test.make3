@@ -1,0 +1,11 @@
+test_a.txt: test_b.txt test_c.txt
+	test_a_cmd_1 y z
+	test_a_cmd_2 w
+
+test_b.txt: test_d.txt
+	test_b_cmd
+
+
+#comment 
+test_c.txt: test_b.txt
+	test_c_cmd
