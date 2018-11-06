@@ -73,7 +73,6 @@ void parse_line(char *line, BuildSpecList *buildSpecList) {
         Command *cmd = malloc(sizeof(Command));
         cmd->argv = tokenize(line, &cmdsLen);
         cmd->argc = cmdsLen;
-        buildSpec->cmdlen++;
         append_cmd(buildSpec, cmd);
         return;
     }
