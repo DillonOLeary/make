@@ -6,7 +6,7 @@ void append_build_spec(BuildSpecList *bsl, BuildSpec *bs) {
         bsl->frstBS = bs;
         bsl->lstBS = bs;
     } else {
-        bsl->lstBS->nxt = bs;
+        bsl->lstBS->nxtBuildSpec = bs;
         bsl->lstBS = bs;
     }
     bsl->len++;
@@ -23,7 +23,7 @@ void append_cmd_to_buildspec(BuildSpec *bs, Command *cmd) {
         bs->cmds->frstCmd = cmd;
         bs->cmds->lstCmd = cmd;
     } else {
-        bs->cmds->lstCmd->nxt = cmd;
+        bs->cmds->lstCmd->nxtCmd = cmd;
         bs->cmds->lstCmd = cmd;
     }
     bs->cmds->len++;
