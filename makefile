@@ -21,7 +21,7 @@ hash_map.o: hash_map.c hash_map.h
 parse_test.o: parse_text.h parse_text.c
 	$(CC) $(WARNING_FLAGS) -c parse_text.c
 
-list_utils.o: list_utils.c list_utils.o
+list_utils.o: list_utils.c list_utils.h
 	$(CC) $(WARNING_FLAGS) -c list_utils.c
 
 
@@ -39,7 +39,7 @@ test_parse: parser.h parse_text.h parse_text.c list_utils.c list_utils.h parse_t
 	gcc -g -Wall -Wextra -o test_parse parse_text.c list_utils.c parse_test.c
 
 clean:
-	rm test_hash
 	rm *.o
 	rm test_assess_specs
 	rm test_parse
+	rm test_hash
