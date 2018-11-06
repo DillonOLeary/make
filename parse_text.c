@@ -30,14 +30,15 @@ char **tokenize(char *line, int *depsLen) {
     int i;
     int tokenCount = 0;
     int stringLength = 0;
-
+      
     for (i = 0; i < MAX_LINE_LENGTH; i++) { 
         if (line[i] == '\t') continue;
         buf[stringLength] = line[i];
                 if (buf[stringLength] == '#') break;
         if (buf[stringLength] == ' ' || buf[stringLength] == '\n' || buf[stringLength] == EOF) {
             if (line[i - 1] == ' ') continue;
-            c = buf[stringLength]; 
+            //if (stringLength == 0) continue;
+            c = buf[stringLength];
             buf[stringLength++] = '\0'; // Probably good to give it a null terminator
             tokenList[tokenCount] = calloc(stringLength, sizeof(char));
             
@@ -99,6 +100,8 @@ void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
     // Check if its a valid target
         free(buildSpec);
         return;
+    } else {
+        tokens[0][i - 1] = '\0';
     }
     append_build_spec(buildSpecList, buildSpec);
     for (i = 1; i < cmdsLen; i++) {

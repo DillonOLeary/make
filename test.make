@@ -7,7 +7,6 @@ targ2: targ3.o
   
 #heres a comment
 targ3.o: make me a file
- invalid!
 	valid command
   
 t4:
