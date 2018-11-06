@@ -8,7 +8,7 @@
  
 // A command to execute
 typedef struct Command {
-    char ** args;
+    char ** argv;
     int argc;
     struct Command * nxtCmd;
 } Command;
