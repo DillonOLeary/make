@@ -166,10 +166,10 @@ void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
         cmd->argv = cmdTolkens;
         printf("The first arg is %s\n", cmd->argv[0]);
         // FIXME make sure this next thing works
-        //setRedirects(cmdTolkens, cmd);
+        setRedirects(cmdTolkens, cmd);
         //printf("The first arg is %s\n", cmd->argv[0]);
-        cmd->argv = cmdTolkens;
-        cmd->argc = cmdsLen;
+        //cmd->argv = cmdTolkens;
+        //cmd->argc = cmdsLen;
         append_cmd_to_buildspec(buildSpec, cmd);
         return;
     }

@@ -17,7 +17,7 @@ int main() {
     specs.len = 0;
     CommandList cmdList;
     // TODO read in the args
-    fp = open_makefile(1, "test.make4");
+    fp = open_makefile(1, "test.make5");
     getBuildSpecList(&specs, fp);
     specs.root = specs.frstBS->target;
     getCommandList(&cmdList, &specs);
