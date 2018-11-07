@@ -83,7 +83,7 @@ int getCommandList(CommandList * cmdList, BuildSpecList * list) {
     visitNode(&map, lookup(&map, map.root), cmdList);
     Command* currCmd = cmdList->frstCmd;
     for (int i=0; i<cmdList->len; i++) {
-        for (int j=0; 0 != currCmd->argv[j]; j++) {
+        for (int j=0; j < currCmd->argc; j++) {
             printf("%s", currCmd->argv[j]);
         }
         printf("\nThe %d command above\n", i); 

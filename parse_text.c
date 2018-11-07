@@ -69,9 +69,36 @@ bool is_empty(char *line) {
 }
 
 char* getIOFilename(char** cmdTolkens, int index) {
-    if(cmdTolk
+    char* retStr;
+    if (cmdTolkens[index][1] == '\0') {
+        retStr = cmdTolkens[index + 1];
+        cmdTolkens[index] = cmdTolkens[index + 1] = "";
+        return retStr;
+    } else {
+        int i;
+        for (i = 0; cmdTolkens[index][i] != '\0'; i++);
+        retStr = malloc(sizeof(char) * i);
+        for(int j = 0; j < i - 1; j++) {
+            retStr[j] = cmdTolkens[index][j+1];
+        }
+        return retStr;
+    }
     // FIXME make sure the correct number of things are removed from
     // cmdTolkens. maybe just make them balnk and then scan for blanks?
+}
+
+/*
+ * remove empty strings from the array
+ */
+char** cleanArgArray(char** uncleanArray, int len, int* resultLen) {
+    char** clean = malloc(sizeof(char*) * len);
+    for (int i=0; i < len; i++) {
+    // FIXME is this the correct way to clcean the array?
+    // FIXME make sure the NULL pointer is added correctly!
+        if (uncleanArray[i][0] != '\0') {
+            clean[*resultLen++] = uncleanArray[i];
+        } 
+    }
 }
 
 /**
@@ -82,17 +109,40 @@ char* getIOFilename(char** cmdTolkens, int index) {
  * is attempted to be set twice
  */
 void setRedirects(char** cmdTolkens, Command* cmd) {
+    cmd->argc = 0;
+    int numElem = 0;
     for (int i=0; cmdTolkens[i] != NULL; i++) {
-        if (cmdTolkens[i][0] == "<") {
+        if (cmdTolkens[i][0] == '<') {
             // set in
             if (1 == cmd->inputSet) {
                 fprintf(stderr, "Cannot set the input twice!\n");
                 exit(-1);
             }
             cmd->inputSet == 1;
-            FILE* infp = fopen(getIOFilename(cmdTolkens, i), "r");
+            char* filename = getIOFilename(cmdTolkens, i);
+            FILE* infp;
+            if(NULL == fopen(filename, "r")) {
+                fprintf(stderr, "Error openinging file: \"%s\"", filename);
+                exit(-1);
+            }
         }
+        if (cmdTolkens[i][0] == '>') {
+            // set out
+            if (1 == cmd->outputSet) {
+                fprintf(stderr, "Cannot set the output twice!\n");
+                exit(-1);
+            }
+            cmd->outputSet == 1;
+            char* filename = getIOFilename(cmdTolkens, i);
+            FILE* outfp;
+            if(NULL == fopen(filename, "r")) {
+                fprintf(stderr, "Error openinging file: \"%s\"", filename);
+                exit(-1);
+            }
+        }
+        numElem++;
     }
+    cmd->argv = cleanArgArray(cmdTolkens, numElem, &(cmd->argc));
 }
 
 void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
@@ -113,8 +163,9 @@ void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
         cmd->input = stdin;
         cmd->inputSet = 0;
         cmd->outputSet = 0;
-        //cmd->argv = 
-        setRedirects(cmdTolkens, cmd);
+        cmd->argv = cmdTolkens;
+        // FIXME make sure this next thing works
+        //setRedirects(cmdTolkens, cmd);
         // cmd->argc = cmdsLen;
         append_cmd_to_buildspec(buildSpec, cmd);
         return;
