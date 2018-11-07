@@ -24,7 +24,7 @@ int getBuildSpecList(BuildSpecList *specs, FILE *fp) {
 char **tokenize(char *line, int *depsLen) {
     /* Allocate a buffer for ind. words and one for the list. They both need
      * to be max length in case our line is one really long word */
-    char **tokenList = calloc(MAX_LINE_LENGTH, sizeof(char *));
+    char **tokenList = calloc(MAX_LINE_LENGTH + 1, sizeof(char *));
     char *buf = calloc(MAX_LINE_LENGTH, sizeof(char));
     char c;
     int i;
@@ -57,6 +57,8 @@ char **tokenize(char *line, int *depsLen) {
 //    for (i = 0; i < tokenCount; i++) {
 //        printf("token %d: %s\n", i, tokenList[i]);
 //    }
+    
+    //tokenList[tokenCount++] = "\0";
     *depsLen = tokenCount;
     return tokenList;
 }
@@ -109,32 +111,32 @@ char** cleanArgArray(char** uncleanArray, int len, int* resultLen) {
  * redirects. Will throw an error if the redirect
  * is attempted to be set twice
  */
-void setRedirects(char** cmdTolkens, Command* cmd) {
+void setRedirects(char** cmdTokens, Command* cmd) {
     cmd->argc = 0;
     int numElem = 0;
-    for (int i=0; cmdTolkens[i] != NULL; i++) {
-        if (cmdTolkens[i][0] == '<') {
+    for (int i=0; cmdTokens[i] != NULL; i++) {
+        if (cmdTokens[i][0] == '<') {
             // set in
             if (1 == cmd->inputSet) {
                 fprintf(stderr, "Cannot set the input twice!\n");
                 exit(-1);
             }
             cmd->inputSet == 1;
-            char* filename = getIOFilename(cmdTolkens, i);
+            char* filename = getIOFilename(cmdTokens, i);
             FILE* infp;
             if(NULL == fopen(filename, "r")) {
                 fprintf(stderr, "Error openinging file: \"%s\"", filename);
                 exit(-1);
             }
         }
-        if (cmdTolkens[i][0] == '>') {
+        if (cmdTokens[i][0] == '>') {
             // set out
             if (1 == cmd->outputSet) {
                 fprintf(stderr, "Cannot set the output twice!\n");
                 exit(-1);
             }
             cmd->outputSet == 1;
-            char* filename = getIOFilename(cmdTolkens, i);
+            char* filename = getIOFilename(cmdTokens, i);
             FILE* outfp;
             if(NULL == fopen(filename, "r")) {
                 fprintf(stderr, "Error openinging file: \"%s\"", filename);
@@ -143,7 +145,7 @@ void setRedirects(char** cmdTolkens, Command* cmd) {
         }
         numElem++;
     }
-    cmd->argv = cleanArgArray(cmdTolkens, numElem, &(cmd->argc));
+    cmd->argv = cleanArgArray(cmdTokens, numElem, &(cmd->argc));
 }
 
 void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
@@ -159,15 +161,14 @@ void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
     if (c == '\t') {
         BuildSpec *buildSpec = get_last_build_spec(buildSpecList);
         Command *cmd = malloc(sizeof(Command));
-        char** cmdTolkens = tokenize(line, &cmdsLen);
+        char** cmdTokens = tokenize(line, &cmdsLen);
         cmd->output = stdout;
         cmd->input = stdin;
         cmd->inputSet = 0;
         cmd->outputSet = 0;
-        cmd->argv = cmdTolkens;
-        printf("The first arg is %s\n", cmd->argv[0]);
+        cmd->argv = cmdTokens;
         // FIXME make sure this next thing works
-        setRedirects(cmdTolkens, cmd);
+        setRedirects(cmdTokens, cmd);
         //printf("The first arg is %s\n", cmd->argv[0]);
         //cmd->argv = cmdTolkens;
         //cmd->argc = cmdsLen;
@@ -186,6 +187,7 @@ void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
     BuildSpec *buildSpec = malloc(sizeof(BuildSpec));
     buildSpec->target = tokens[0];
     for (i = 0; '\0' != tokens[0][i]; i++);
+    
     if (tokens[0][i - 1] != ':') {
     // Check if its a valid target
         free(buildSpec);
@@ -193,10 +195,12 @@ void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
     } else {
         tokens[0][i - 1] = '\0';
     }
+
     append_build_spec(buildSpecList, buildSpec);
     for (i = 1; i < cmdsLen; i++) {
         tokens[i - 1] = tokens[i];
     }
+
     buildSpec->deps = tokens;
     buildSpec->depsLen = cmdsLen - 1;
     buildSpec->cmds = malloc(sizeof(CommandList));

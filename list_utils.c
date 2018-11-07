@@ -22,11 +22,9 @@ void append_cmd_to_buildspec(BuildSpec *bs, Command *cmd) {
     if (bs->cmds->len == 0) {
         bs->cmds->frstCmd = cmd;
         bs->cmds->lstCmd = cmd;
-        bs->cmds->lstCmd->nxtCmd = NULL;
     } else {
         bs->cmds->lstCmd->nxtCmd = cmd;
         bs->cmds->lstCmd = cmd;
-        bs->cmds->lstCmd->nxtCmd = NULL;
     }
     bs->cmds->len++;
 }
