@@ -6,6 +6,7 @@
 #include "assess_specs.h"
 #include "parser.h"
 #include "parse_text.h"
+#include "spawn.h"
 
 int main() {
     FILE * fp;
@@ -16,8 +17,9 @@ int main() {
     specs.len = 0;
     CommandList cmdList;
     // TODO read in the args
-    fp = open_makefile(1, "test.make3");
+    fp = open_makefile(1, "test.make4");
     getBuildSpecList(&specs, fp);
     specs.root = specs.frstBS->target;
     getCommandList(&cmdList, &specs);
+    create_family(&cmdList);
 }

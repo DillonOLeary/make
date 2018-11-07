@@ -1,0 +1,11 @@
+test_a.txt: test_b.txt test_c.txt
+	echo test_a
+	ls -a
+
+test_b.txt: test_d.txt
+	echo test_b
+
+
+#comment 
+test_c.txt: test_b.txt
+	echo test_c

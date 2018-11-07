@@ -86,6 +86,7 @@ int getCommandList(CommandList * cmdList, BuildSpecList * list) {
         for (int j=0; j < currCmd->argc; j++) {
             printf("%s", currCmd->argv[j]);
         }
+        currCmd = currCmd->nxtCmd;
         printf("\nThe %d command above\n", i); 
     }
     return 0;
