@@ -15,7 +15,7 @@ void create_child(Command *cmd) {
         
     } else {
         // Parent
-        wait();
+        wait(NULL);
     }
 }
 

@@ -4,7 +4,7 @@ EXE = 537make
 SCAN_BUILD_DIR = scan-build-out
 
 make: make.o assess_specs.o hash_map.o spawn.o parse_text.o list_utils.o
-	$(CC) -o $(EXE) make.o assess_specs.o spwan.o parser.h hash_map.o parse_text.o list_utils.o 
+	$(CC) -o $(EXE) make.o assess_specs.o spawn.o parser.h hash_map.o parse_text.o list_utils.o 
 
 make.o: make.c
 	$(CC) $(WARNING_FLAGS) -c make.c
