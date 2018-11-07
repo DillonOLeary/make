@@ -11,7 +11,7 @@
 time_t getLastMod(char* filename) {
     struct stat buf;
     if (-1 == stat(filename, &buf)) {
-        fprintf(stderr, "Cannot open target stat file, file many not exist\n");
+        fprintf(stderr, "Cannot open target stat file: '%s', file many not exist\n", filename);
         exit(-1);
     }
     printf("File: %s Last mod: %s\n", filename, ctime(&buf.st_mtime));
@@ -64,6 +64,7 @@ void visitNode(DAG_map * map, BuildSpecNode * node, CommandList * cmdList) {
     node->permMark = 1;
 //    add n to head of L
     //Command** cmds = node->data->cmds;
+    // FIXME should we not run this if it is the root node?
     if (targetOlderThanDeps(node->data->target, node->data->deps,
                 node->data->depsLen)) {
         return;
