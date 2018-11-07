@@ -51,6 +51,7 @@ void insertNode(DAG_map * map, BuildSpecNode * node) {
 
 void populateMap(DAG_map * map, BuildSpecList* specs) {
     BuildSpec* currSpec = specs->frstBS;
+    printf("HERE\n");
     for(int i=0; i<specs->len; i++) {
         BuildSpecNode * node = malloc(sizeof(BuildSpecNode));
         node->data = currSpec;

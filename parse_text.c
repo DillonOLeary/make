@@ -96,9 +96,10 @@ char** cleanArgArray(char** uncleanArray, int len, int* resultLen) {
     // FIXME is this the correct way to clcean the array?
     // FIXME make sure the NULL pointer is added correctly!
         if (uncleanArray[i][0] != '\0') {
-            clean[*resultLen++] = uncleanArray[i];
+            clean[(*resultLen)++] = uncleanArray[i];
         } 
     }
+    return clean;
 }
 
 /**

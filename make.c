@@ -7,8 +7,11 @@
 #include "parser.h"
 #include "parse_text.h"
 #include "spawn.h"
+#include "parse_args.h"
 
-int main() {
+
+
+int main(int argc, char *argv[]) {
     FILE * fp;
     BuildSpecList specs;
     // FIXME set root to be whatever is passed in by the command line
@@ -17,9 +20,15 @@ int main() {
     specs.len = 0;
     CommandList cmdList;
     // TODO read in the args
-    fp = open_makefile(1, "test.make5");
+    //
+    //
+    char filename[MAX_ARG_LENGTH];
+    bool fflag = false;
+    parse_args(argc, argv, &fflag, filename);
+    fp = open_makefile(fflag, filename);
     getBuildSpecList(&specs, fp);
     specs.root = specs.frstBS->target;
+    printf("ROOT: %s\n", specs.root);
     getCommandList(&cmdList, &specs);
     create_family(&cmdList);
 }
