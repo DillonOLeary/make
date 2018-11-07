@@ -34,7 +34,9 @@ char **tokenize(char *line, int *depsLen) {
     for (i = 0; i < MAX_LINE_LENGTH; i++) { 
         if (line[i] == '\t') continue;
         buf[stringLength] = line[i];
-                if (buf[stringLength] == '#') break;
+        
+        if (buf[stringLength] == '#') break;
+        
         if (buf[stringLength] == ' ' || buf[stringLength] == '\n' || buf[stringLength] == EOF) {
             if (line[i - 1] == ' ') continue;
             //if (stringLength == 0) continue;
@@ -54,11 +56,11 @@ char **tokenize(char *line, int *depsLen) {
         stringLength++; 
     }
 
-//    for (i = 0; i < tokenCount; i++) {
-//        printf("token %d: %s\n", i, tokenList[i]);
-//    }
+    /* DEBUG */
+    //for (i = 0; i < tokenCount; i++) {
+    //    printf("token %d: %s\n", i, tokenList[i]);
+    //}
     
-    //tokenList[tokenCount++] = "\0";
     *depsLen = tokenCount;
     return tokenList;
 }
@@ -148,6 +150,28 @@ void setRedirects(char** cmdTokens, Command* cmd) {
     cmd->argv = cleanArgArray(cmdTokens, numElem, &(cmd->argc));
 }
 
+int check_target(char **tokens, int *argc) {
+    for (int i = 0; i < *argc; i++) {
+        for (int j = 0; tokens[i][j] != '\0'; j++) {
+            if (tokens[i][j] == ':') {
+                if (j == 0) {
+                    // Remove ":" from list
+                    for (int k = i; k < *argc - 1; k++) {
+                        tokens[k] = tokens[k + 1];
+                    }
+                    *argc = *argc - 1;    
+                } else {
+                    // Remove ':' from string
+                    tokens[i][j] = '\0';
+                }
+                return 0;
+            }
+        }
+    }
+    return 1;
+}
+
+
 void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
     char c = line[0];
     int i;
@@ -185,9 +209,18 @@ void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
     tokens = tokenize(line, &cmdsLen);
     
     BuildSpec *buildSpec = malloc(sizeof(BuildSpec));
-    buildSpec->target = tokens[0];
-    for (i = 0; '\0' != tokens[0][i]; i++);
     
+    buildSpec->target = tokens[0];
+    
+    for (i = 0; '\0' != tokens[0][i]; i++); // Finds the length of the first token
+    
+    /* Checks if there is a colon in the line, indicating a target. it then removes the colon */
+    if (check_target(tokens, &cmdsLen)) {
+        free(buildSpec);  // Check for where target is and and remove colon
+        return;
+    }
+
+    /*
     if (tokens[0][i - 1] != ':') {
     // Check if its a valid target
         free(buildSpec);
@@ -195,6 +228,7 @@ void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
     } else {
         tokens[0][i - 1] = '\0';
     }
+    */
 
     append_build_spec(buildSpecList, buildSpec);
     for (i = 1; i < cmdsLen; i++) {
