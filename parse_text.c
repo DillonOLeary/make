@@ -24,7 +24,7 @@ int getBuildSpecList(BuildSpecList *specs, FILE *fp) {
 char **tokenize(char *line, int *depsLen) {
     /* Allocate a buffer for ind. words and one for the list. They both need
      * to be max length in case our line is one really long word */
-    char **tokenList = calloc(MAX_LINE_LENGTH + 1, sizeof(char *));
+    char **tokenList = calloc(MAX_LINE_LENGTH, sizeof(char *));
     char *buf = calloc(MAX_LINE_LENGTH, sizeof(char));
     char c;
     int i;
@@ -150,7 +150,22 @@ void setRedirects(char** cmdTokens, Command* cmd) {
     cmd->argv = cleanArgArray(cmdTokens, numElem, &(cmd->argc));
 }
 
+
+/** DEPRECATED!
+void flatten_tokens(char **tokens, int argc, char *flatTokens) {
+    int cnt = 0;
+    for (int i = 0; i < argc; i++) {
+        for (int j = 0; tokens[i][j] != '\0'; j++) {
+            flatTokens[cnt++] = tokens[i][j];
+        }
+        flatTokens[cnt++] = ' ';
+    }
+    flatTokens[cnt++] = '\n';
+}
+
 int check_target(char **tokens, int *argc) {
+    char flattenBuf[MAX_LINE_LENGTH];
+
     for (int i = 0; i < *argc; i++) {
         for (int j = 0; tokens[i][j] != '\0'; j++) {
             if (tokens[i][j] == ':') {
@@ -162,7 +177,15 @@ int check_target(char **tokens, int *argc) {
                     *argc = *argc - 1;    
                 } else {
                     // Remove ':' from string
-                    tokens[i][j] = '\0';
+                    if (tokens[i][j + 1] == '\0') {
+                        tokens[i][j] = '\0';
+                    } else {
+                        tokens[i][j] = ' ';
+                        flatten_tokens(tokens, *argc, flattenBuf);
+                        printf("FLATTENED BUF: %s\n", flattenBuf);
+                        tokens = tokenize(flattenBuf, argc);    // Its just crazy enough to work
+                        printf("ARGC: %d\n", *argc);
+                    }
                 }
                 return 0;
             }
@@ -170,6 +193,20 @@ int check_target(char **tokens, int *argc) {
     }
     return 1;
 }
+
+*/
+
+
+// This works instead of all of the above code haha
+void check_colon(char *line) {
+    for (int i = 0; i < MAX_LINE_LENGTH; i++) {
+        if (line[i] == ':') {
+            line[i] = ' ';
+            return;
+        }
+    }
+}
+
 
 
 void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
@@ -206,18 +243,26 @@ void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
             exit(1);
         }
     }
+
+    check_colon(line);
+
     tokens = tokenize(line, &cmdsLen);
     
     BuildSpec *buildSpec = malloc(sizeof(BuildSpec));
     
     buildSpec->target = tokens[0];
     
-    for (i = 0; '\0' != tokens[0][i]; i++); // Finds the length of the first token
+    //for (i = 0; '\0' != tokens[0][i]; i++); // Finds the length of the first token
     
     /* Checks if there is a colon in the line, indicating a target. it then removes the colon */
-    if (check_target(tokens, &cmdsLen)) {
+  /*  if (check_target(tokens, &cmdsLen)) {
         free(buildSpec);  // Check for where target is and and remove colon
+        printf("Invalid line!\n");
         return;
+    }*/
+    
+    for (i = 0; i < cmdsLen; i++) {
+        printf("TOKEN %d: %s\n", i, tokens[i]); 
     }
 
     /*
@@ -229,6 +274,7 @@ void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
         tokens[0][i - 1] = '\0';
     }
     */
+    
 
     append_build_spec(buildSpecList, buildSpec);
     for (i = 1; i < cmdsLen; i++) {
