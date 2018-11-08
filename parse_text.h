@@ -14,7 +14,7 @@ char **get_deps();
 
 BuildSpecList parse_makefile(bool fflag, char *filename);
 
-char *get_file_line(FILE *fp, bool *isEnd);
+char *get_file_line(FILE *fp, bool *isEnd, int lineNum);
 
 void parse_line(char *file_line, BuildSpecList *bsl, int lineNum);
 
