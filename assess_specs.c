@@ -55,7 +55,7 @@ int checkDeps(DAG_map * map, BuildSpecNode* node) {
         if (1 == lookup(map, node->data->deps[i])->hasExec) {
             return 1;
         }
-        if (getLastMod(node->data->target) > getLastMod(node->data->deps[i])) {
+        if (getLastMod(node->data->target) < getLastMod(node->data->deps[i])) {
             printf("The target file %s was modified before the dep file %s !\n", node->data->target, node->data->deps[i]);
             return 1;
         }
@@ -71,7 +71,9 @@ int checkDeps(DAG_map * map, BuildSpecNode* node) {
  */
 int shouldExec(DAG_map* map, BuildSpecNode * node) {
     // check if it's a file
-    if (NULL != fopen(node->data->target, "r")) {
+    struct stat buf;
+    if (-1 == stat(node->data->target, &buf)) {
+        fprintf(stderr, "Cannot open target file: '%s', assume it is a phony target!\n", node->data->target);
         return 1;
     }
     // check the dependencies
@@ -133,7 +135,7 @@ int getCommandList(CommandList * cmdList, BuildSpecList * list) {
     Command* currCmd = cmdList->frstCmd;
     for (int i=0; i<cmdList->len; i++) {
         for (int j=0; j < currCmd->argc; j++) {
-            printf("%s", currCmd->argv[j]);
+            printf("%s ", currCmd->argv[j]);
         }
         currCmd = currCmd->nxtCmd;
         printf("\nThe %d command above\n", i); 

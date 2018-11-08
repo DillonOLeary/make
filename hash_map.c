@@ -31,7 +31,7 @@ hash(unsigned char *str)
 }
 
 int getIndex(char * str, int size) {
-    printf("Hash #: %ld, with mod %d\n", hash( (unsigned char*) str), (int)(hash( (unsigned char*) str) % size));
+    //printf("Hash #: %ld, with mod %d\n", hash( (unsigned char*) str), (int)(hash( (unsigned char*) str) % size));
     // FIXME is this the correct casting?
     return hash( (unsigned char*) str) % size;
 }
@@ -51,7 +51,6 @@ void insertNode(DAG_map * map, BuildSpecNode * node) {
 
 void populateMap(DAG_map * map, BuildSpecList* specs) {
     BuildSpec* currSpec = specs->frstBS;
-    printf("HERE\n");
     for(int i=0; i<specs->len; i++) {
         BuildSpecNode * node = malloc(sizeof(BuildSpecNode));
         node->data = currSpec;
