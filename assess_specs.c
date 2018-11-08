@@ -16,7 +16,7 @@ time_t getLastMod(char* filename) {
         //exit(-1);
         return 0;
     }
-    printf("File: %s Last mod: %s\n", filename, ctime(&buf.st_mtime));
+    //printf("File: %s Last mod: %s\n", filename, ctime(&buf.st_mtime));
     return buf.st_mtime;
 }
 
@@ -56,11 +56,11 @@ int checkDeps(DAG_map * map, BuildSpecNode* node) {
             return 1;
         }
         if (getLastMod(node->data->target) < getLastMod(node->data->deps[i])) {
-            printf("The target file %s was modified before the dep file %s !\n", node->data->target, node->data->deps[i]);
+            //printf("The target file %s was modified before the dep file %s !\n", node->data->target, node->data->deps[i]);
             return 1;
         }
     }
-    printf("None of the deps have been modified since the target %s was modified. Deps len %d\n", node->data->target, node->data->depsLen);
+    //printf("None of the deps have been modified since the target %s was modified. Deps len %d\n", node->data->target, node->data->depsLen);
     return -1;
 }
 
@@ -94,7 +94,7 @@ void add_cmd_to_list(BuildSpecNode * node, CommandList* cmdList) {
  * it also adds commands to a list if it is appropriate
  */
 void visitNode(DAG_map * map, BuildSpecNode * node, CommandList * cmdList) {
-    printf("Visit node %s\n", node->data->target);
+    //printf("Visit node %s\n", node->data->target);
 //    if n has a permanent mark then return
     if (node->permMark == 1) {
         return;
