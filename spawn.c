@@ -18,6 +18,7 @@ void create_child(Command *cmd) {
         
         //cmd->argv[cmd->argc - 1] = '\0';
         //printf("PROC: %s || cmd->argv[0]: %s\n", childArgv[0], childArgv[1]); 
+        // FIXME this needs to exit if there is an issue with the execution
         if (-1 == execvp(childArgv[0], childArgv)) {
             printf("Error, quiting\n");
             exit(-1);
