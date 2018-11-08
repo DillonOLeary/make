@@ -6,16 +6,18 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_LINE_LENGTH 512
+#define MAX_LINE_LENGTH 1024
 
 
 int getBuildSpecList(BuildSpecList *specs, FILE *fp) {
     char *file_line;
     bool isEnd = false;
-    int lineNum = 1;
+    int lineNum = 0;
     while (!isEnd) {
-        file_line = get_file_line(fp, &isEnd);
-        parse_line(file_line, specs, lineNum++);
+        lineNum++;
+        file_line = get_file_line(fp, &isEnd, lineNum);
+        if (file_line == NULL) continue;
+        parse_line(file_line, specs, lineNum);
     }
     return 0;
 }
@@ -198,26 +200,26 @@ int check_target(char **tokens, int *argc) {
 
 
 // This works instead of all of the above code haha
-void check_colon(char *line) {
+int check_colon(char *line) {
     for (int i = 0; i < MAX_LINE_LENGTH; i++) {
         if (line[i] == ':') {
             line[i] = ' ';
-            return;
+            return 0;
         }
     }
+    return 1;
 }
-
-
 
 void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
     char c = line[0];
     int i;
     int cmdsLen;
     char **tokens;
+     
 
     //FIXME this must return an error if there is a null char in the line
     // or if the line is too long    
-    if (c == '#') return; 
+    if (c == '#') return;
     // Must be a line of commands
     if (c == '\t') {
         BuildSpec *buildSpec = get_last_build_spec(buildSpecList);
@@ -244,7 +246,10 @@ void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
         }
     }
 
-    check_colon(line);
+    if (check_colon(line)) {
+        printf("%d: Invalid line, neither a target nor a command\n", lineNum);
+        exit(1);
+    }  // Add checking to see if there is a colon
 
     tokens = tokenize(line, &cmdsLen);
     
@@ -252,29 +257,9 @@ void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
     
     buildSpec->target = tokens[0];
     
-    //for (i = 0; '\0' != tokens[0][i]; i++); // Finds the length of the first token
-    
-    /* Checks if there is a colon in the line, indicating a target. it then removes the colon */
-  /*  if (check_target(tokens, &cmdsLen)) {
-        free(buildSpec);  // Check for where target is and and remove colon
-        printf("Invalid line!\n");
-        return;
-    }*/
-    
     for (i = 0; i < cmdsLen; i++) {
         printf("TOKEN %d: %s\n", i, tokens[i]); 
     }
-
-    /*
-    if (tokens[0][i - 1] != ':') {
-    // Check if its a valid target
-        free(buildSpec);
-        return;
-    } else {
-        tokens[0][i - 1] = '\0';
-    }
-    */
-    
 
     append_build_spec(buildSpecList, buildSpec);
     for (i = 1; i < cmdsLen; i++) {
@@ -288,7 +273,7 @@ void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
     free(line);
 }
 
-char *get_file_line(FILE *fp, bool *isEnd) {
+char *get_file_line(FILE *fp, bool *isEnd, int lineNum) {
     char *input = malloc(MAX_LINE_LENGTH * sizeof(char));
     int i;
 
@@ -298,8 +283,13 @@ char *get_file_line(FILE *fp, bool *isEnd) {
             if (input[i] == EOF) *isEnd = true;
             return input;
         }
+        if (input[i] == '\0') {
+            fprintf(stderr, "%d: Invalid Null char mid line\n", lineNum);
+            exit(1);
+        }
     }
-    return "";
+    fprintf(stderr, "%d: Line too long, ignoring\n", lineNum);
+    return NULL;
 }
 
 FILE *open_makefile(bool fflag, char *filename) {
