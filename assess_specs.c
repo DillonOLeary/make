@@ -16,30 +16,10 @@ time_t getLastMod(char* filename) {
         //exit(-1);
         return 0;
     }
-    printf("File: %s Last mod: %s\n", filename, ctime(&buf.st_mtime));
+    //printf("File: %s Last mod: %s\n", filename, ctime(&buf.st_mtime));
     return buf.st_mtime;
 }
 
-/**
- * Return 1 if the target is older then the deps
- * TODO should also return true if the target needs
- * to be recompiled, as in it doesn't exist
- *
-int targetOlderThanDeps(char* target, char** deps, int depsLen) {
-    // FIXME this isn't right!! it can have no dependencies and not be a file! i can have
-    // no commands and still not be a file! I need some sort of flag...
-    if (depsLen == 0) {
-        printf("%s is a file!!\n", target);
-        // FIXME return 0 or 1??
-        return 0;
-    }
-    for (int i=0; i<depsLen; i++) {
-        //if (getLastMod(target) > getLastMod(deps[i]))
-            return 0;
-    }
-    return 0;
-}
-*/
 
 /**
  * check the deps of the node. assume that it is file
@@ -56,11 +36,11 @@ int checkDeps(DAG_map * map, BuildSpecNode* node) {
             return 1;
         }
         if (getLastMod(node->data->target) < getLastMod(node->data->deps[i])) {
-            printf("The target file %s was modified before the dep file %s !\n", node->data->target, node->data->deps[i]);
+            //printf("The target file %s was modified before the dep file %s !\n", node->data->target, node->data->deps[i]);
             return 1;
         }
     }
-    printf("None of the deps have been modified since the target %s was modified. Deps len %d\n", node->data->target, node->data->depsLen);
+    //printf("None of the deps have been modified since the target %s was modified. Deps len %d\n", node->data->target, node->data->depsLen);
     return -1;
 }
 
@@ -94,7 +74,7 @@ void add_cmd_to_list(BuildSpecNode * node, CommandList* cmdList) {
  * it also adds commands to a list if it is appropriate
  */
 void visitNode(DAG_map * map, BuildSpecNode * node, CommandList * cmdList) {
-    printf("Visit node %s\n", node->data->target);
+    //printf("Visit node %s\n", node->data->target);
 //    if n has a permanent mark then return
     if (node->permMark == 1) {
         return;

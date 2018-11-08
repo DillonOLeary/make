@@ -84,7 +84,7 @@ BuildSpecNode * lookup(DAG_map * map, char* target) {
     // FIXME this assumes that spots that arent' used are null
     // FIXME this also assumes that we will never run out of space
     if (map->map[hashIndex] == NULL) {
-        fprintf(stdout, "This target %s is not in the map! Assume it is a file\n", target);
+        //fprintf(stdout, "This target %s is not in the map! Assume it is a file\n", target);
         return createDummyNode(target);
     }
     while (strcmp(target, map->map[hashIndex]->data->target) != 0) {
@@ -99,7 +99,7 @@ BuildSpecNode * lookup(DAG_map * map, char* target) {
             // Also the dummy node probably needs some flag, but
             // also it might not because it neither has dependencies nor
             // commands
-            fprintf(stdout, "This target %s is not in the map! Assume it is a file\n", target);
+            //fprintf(stdout, "This target %s is not in the map! Assume it is a file\n", target);
             return createDummyNode(target);
         }
     }
