@@ -29,7 +29,8 @@ int main(int argc, char *argv[]) {
     parse_args(argc, argv, &fflag, filename, root);
     fp = open_makefile(fflag, filename);
     getBuildSpecList(&specs, fp);
-    specs.root = specs.frstBS->target;
+    if (root == NULL)
+        specs.root = specs.frstBS->target;
     printf("ROOT: %s\n", specs.root);
     getCommandList(&cmdList, &specs);
     create_family(&cmdList);
