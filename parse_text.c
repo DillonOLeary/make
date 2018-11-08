@@ -243,6 +243,8 @@ void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
         if (!is_empty(line)) {
             printf("Error line:%d has invalid spacing\n", lineNum);
             exit(1);
+        } else {
+            return;
         }
     }
 
@@ -289,6 +291,7 @@ char *get_file_line(FILE *fp, bool *isEnd, int lineNum) {
         }
     }
     fprintf(stderr, "%d: Line too long, ignoring\n", lineNum);
+    exit(1);
     return NULL;
 }
 
