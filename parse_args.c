@@ -29,8 +29,8 @@ void parse_args(int argc, char *argv[], bool *fflag, char *filename, char* root)
         }
 
     }*/
-char option;
-        while ((option = getopt(argc, argv, "f:")) != -1) {
+    char option;
+    while ((option = getopt(argc, argv, "f:")) != -1) {
         switch (option) {
             case 'f':
                 for (int i = 0; i < MAX_ARG_LENGTH; i++) {

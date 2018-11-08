@@ -14,19 +14,16 @@
 int main(int argc, char *argv[]) {
     FILE * fp;
     BuildSpecList specs;
-    char *root; // the root node. If it's not specified then
+    char *root = NULL; // the root node. If it's not specified then
     // its assumed to be the first build spec
-    // FIXME set root to be whatever is passed in by the command line
+    // set root to be whatever is passed in by the command line
     // if there is something in the command then set it to that
     // otherwise it defaults to the first
     specs.len = 0;
     CommandList cmdList;
-    // TODO read in the args
-    //
-    //
     char filename[MAX_ARG_LENGTH];
     bool fflag = false;
-    
+    // FIXME this might not work if the flag is right next to the filename, no space
     if (argc == 4) {
         if (!strcmp(argv[1], "-f")) {
             root = argv[3];
@@ -36,7 +33,8 @@ int main(int argc, char *argv[]) {
     } else if (argc == 2) {
         root = argv[1];
     }
-    printf("root: %s\n", root);
+    //if (root != NULL)
+    //printf("root: %s\n", root);
     parse_args(argc, argv, &fflag, filename, root);
     fp = open_makefile(fflag, filename);
     getBuildSpecList(&specs, fp);
