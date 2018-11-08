@@ -215,10 +215,7 @@ void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
     int i;
     int cmdsLen;
     char **tokens;
-     
-
-    //FIXME this must return an error if there is a null char in the line
-    // or if the line is too long    
+        
     if (c == '#') return;
     // Must be a line of commands
     if (c == '\t') {
@@ -236,12 +233,13 @@ void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
         //cmd->argv = cmdTolkens;
         //cmd->argc = cmdsLen;
         append_cmd_to_buildspec(buildSpec, cmd);
+        free(line);
         return;
     }
     if (c == '\n' || c == EOF) return;  // Need a further check
     if (c == ' ') {
         if (!is_empty(line)) {
-            printf("Error line:%d has invalid spacing\n", lineNum);
+            fprintf(stderr, "Error line:%d has invalid spacing\n", lineNum);
             exit(1);
         } else {
             return;
@@ -249,7 +247,7 @@ void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
     }
 
     if (check_colon(line)) {
-        printf("%d: Invalid line, neither a target nor a command\n", lineNum);
+        fprintf(stderr, "%d: Invalid line, neither a target nor a command\n", lineNum);
         exit(1);
     }  // Add checking to see if there is a colon
 
@@ -258,10 +256,11 @@ void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
     BuildSpec *buildSpec = malloc(sizeof(BuildSpec));
     
     buildSpec->target = tokens[0];
-    
-    for (i = 0; i < cmdsLen; i++) {
-        printf("TOKEN %d: %s\n", i, tokens[i]); 
-    }
+  
+  // DEBUG  
+//    for (i = 0; i < cmdsLen; i++) {
+//        printf("TOKEN %d: %s\n", i, tokens[i]); 
+//    }
 
     append_build_spec(buildSpecList, buildSpec);
     for (i = 1; i < cmdsLen; i++) {
@@ -277,9 +276,8 @@ void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
 
 char *get_file_line(FILE *fp, bool *isEnd, int lineNum) {
     char *input = malloc(MAX_LINE_LENGTH * sizeof(char));
-    int i;
-
-    for (i = 0; i < MAX_LINE_LENGTH; i++) {
+   
+    for (int i = 0; i < MAX_LINE_LENGTH; i++) {
         input[i] = fgetc(fp);
         if (input[i] == '\n' || input[i] == EOF) {
             if (input[i] == EOF) *isEnd = true;
