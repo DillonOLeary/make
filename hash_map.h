@@ -18,6 +18,7 @@ typedef struct BuildSpecNode {
     int permMark;
     BuildSpec * data;
     char ** children;
+    int hasExec;
 } BuildSpecNode;
 
 // Directed Acyclic Graph mapped with a

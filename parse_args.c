@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include "parse_args.h"
 
-void parse_args(int argc, char *argv[], bool *fflag, char *filename) {
+void parse_args(int argc, char *argv[], bool *fflag, char *filename, char* root) {
     char option;
 
     while ((option = getopt(argc, argv, "f:")) != -1) {

@@ -12,12 +12,12 @@ void create_child(Command *cmd) {
     char *childArgv[cmd->argc + 1]; // add one for a null terminator
     for (int i = 0; i < cmd->argc; i++) childArgv[i] = cmd->argv[i];
     childArgv[cmd->argc] = NULL;
-    printf("CMD[0] -> %s\n", cmd->argv[2]);
+    //printf("CMD[0] -> %s\n", cmd->argv[2]);
     if ((child_pid = fork()) == 0) {
         // Child
         
         //cmd->argv[cmd->argc - 1] = '\0';
-        printf("PROC: %s || cmd->argv[0]: %s\n", childArgv[0], childArgv[1]); 
+        //printf("PROC: %s || cmd->argv[0]: %s\n", childArgv[0], childArgv[1]); 
         if (-1 == execvp(childArgv[0], childArgv)) {
             printf("Error, quiting\n");
             exit(-1);

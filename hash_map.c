@@ -57,6 +57,7 @@ void populateMap(DAG_map * map, BuildSpecList* specs) {
         node->data = currSpec;
         node->tempMark = node->permMark = 0;
         node->children = currSpec->deps;
+        node->hasExec = 0;
         insertNode(map, node);
         currSpec = next_BS(currSpec);
     }
@@ -75,6 +76,7 @@ BuildSpecNode * createDummyNode(char* target) {
     spec->depsLen = 0;
     spec->cmds->len = 0;
     node->data = spec;
+    node->hasExec = 0;
     return node;
 }
 

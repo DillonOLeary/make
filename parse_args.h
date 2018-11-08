@@ -4,7 +4,7 @@
 #include <stdbool.h>
 
 #define MAX_ARG_LENGTH 256
-void parse_args(int argc, char *argv[], bool *fflag, char *filename);
+void parse_args(int argc, char *argv[], bool *fflag, char *filename, char* root);
 
 
 #endif

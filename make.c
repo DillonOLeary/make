@@ -14,6 +14,8 @@
 int main(int argc, char *argv[]) {
     FILE * fp;
     BuildSpecList specs;
+    char* root = NULL; // the root node. If it's not specified then
+    // its assumed to be the first build spec
     // FIXME set root to be whatever is passed in by the command line
     // if there is something in the command then set it to that
     // otherwise it defaults to the first
@@ -24,7 +26,7 @@ int main(int argc, char *argv[]) {
     //
     char filename[MAX_ARG_LENGTH];
     bool fflag = false;
-    parse_args(argc, argv, &fflag, filename);
+    parse_args(argc, argv, &fflag, filename, root);
     fp = open_makefile(fflag, filename);
     getBuildSpecList(&specs, fp);
     specs.root = specs.frstBS->target;
