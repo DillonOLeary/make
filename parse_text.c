@@ -99,8 +99,8 @@ char* getIOFilename(char** cmdTolkens, int index) {
         }
         return retStr;
     }
-    // FIXME make sure the correct number of things are removed from
-    // cmdTolkens. maybe just make them balnk and then scan for blanks?
+    // make sure the correct number of things are removed from
+    // cmdTolkens. 
 }
 
 /*
@@ -109,8 +109,7 @@ char* getIOFilename(char** cmdTolkens, int index) {
 char** cleanArgArray(char** uncleanArray, int len, int* resultLen) {
     char** clean = malloc(sizeof(char*) * len);
     for (int i=0; i < len; i++) {
-    // FIXME is this the correct way to clcean the array?
-    // FIXME make sure the NULL pointer is added correctly!
+    // make sure the NULL pointer is added correctly!
         if (uncleanArray[i][0] != '\0') {
             clean[(*resultLen)++] = uncleanArray[i];
         } 

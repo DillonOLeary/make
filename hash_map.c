@@ -12,11 +12,10 @@ void createMap(DAG_map * d_map, BuildSpecList * specs) {
     }
     //d_map->size = size;
     d_map->size = arr_size;
-    // FIXME assert the first element is the root
     d_map->root = specs->root;
 }
 
-// FIXME THIS IS NOT MY CODE! its from http://www.cse.yorku.ca/~oz/hash.html
+// THIS IS NOT MY CODE! its from http://www.cse.yorku.ca/~oz/hash.html
 // My TA said I could use it
 unsigned long
 hash(unsigned char *str)
@@ -32,13 +31,10 @@ hash(unsigned char *str)
 
 int getIndex(char * str, int size) {
     //printf("Hash #: %ld, with mod %d\n", hash( (unsigned char*) str), (int)(hash( (unsigned char*) str) % size));
-    // FIXME is this the correct casting?
     return hash( (unsigned char*) str) % size;
 }
 void insertNode(DAG_map * map, BuildSpecNode * node) {
     int hashIndex = getIndex(node->data->target, map->size);
-    // FIXME this assumes that spots that arent' used are null
-    // FIXME this also assumes that we will never run out of space
     while (map->map[hashIndex] != NULL) {
         if (strcmp(node->data->target, map->map[hashIndex]->data->target) == 0) {
             fprintf(stderr, "Error, same target twice\n");
@@ -81,8 +77,6 @@ BuildSpecNode * createDummyNode(char* target) {
 
 BuildSpecNode * lookup(DAG_map * map, char* target) {
     int hashIndex = getIndex(target, map->size);
-    // FIXME this assumes that spots that arent' used are null
-    // FIXME this also assumes that we will never run out of space
     if (map->map[hashIndex] == NULL) {
         //fprintf(stdout, "This target %s is not in the map! Assume it is a file\n", target);
         return createDummyNode(target);
@@ -90,7 +84,7 @@ BuildSpecNode * lookup(DAG_map * map, char* target) {
     while (strcmp(target, map->map[hashIndex]->data->target) != 0) {
         hashIndex = (hashIndex + 1) % map->size;
         if (map->map[hashIndex] == NULL) {
-            // TODO if an element is searched for that doesn't
+            // if an element is searched for that doesn't
             // exit, instead of throwing an error it might be a
             // file that isn't a build spec. In that case I need to 
             // return a dummy node if it exists, if not throw an

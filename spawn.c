@@ -10,7 +10,7 @@ void parseAndCleanCmd(Command* cmd) {
     char** newArgv = malloc(sizeof(char*) * (cmd->argc + 1));
     int newArrLen = 0;
     for (int i=0;i<cmd->argc;i++) {
-        // FIXME assume there is a spce between the < > and the filenames
+        // assume there is a spce between the < > and the filenames
         if (cmd->argv[i][0] == '>') {
             if (cmd->outputSet == 1) {
                 fprintf(stderr, "Cannot set output twice!\n");

@@ -23,7 +23,6 @@ int main(int argc, char *argv[]) {
     CommandList cmdList;
     char filename[MAX_ARG_LENGTH];
     bool fflag = false;
-    // FIXME this might not work if the flag is right next to the filename, no space
     if (argc == 4) {
         if (!strcmp(argv[1], "-f")) {
             root = argv[3];

@@ -7,7 +7,6 @@
 #ifndef __hash__map_h__
 #define __hash__map_h__
 #include "parser.h"
-// FIXME use const
 #define LOAD_FACTOR .5
 // each node in the map
 typedef struct BuildSpecNode {
@@ -28,7 +27,7 @@ typedef struct {
     int size;
     char* root;
 } DAG_map;
-// TODO remove this functino header and the next one
+
 void createMap(DAG_map * d_map, BuildSpecList * specs);
 
 void populateMap(DAG_map * map, BuildSpecList* specs);

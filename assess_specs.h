@@ -15,7 +15,7 @@
 //    size_t used;
 //    size_t size;
 //} CommandListFinal;
-// FIXME it would be nice to replace this with
+// replaced this with
 // Ezra command list, this one hold all the commands
 // that need to run whereas Ezras holds the commands
 // for each buildspec
