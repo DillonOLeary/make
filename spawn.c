@@ -6,6 +6,19 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+void parseAndCleanCmd(Command* cmd) {
+
+}
+
+/**
+ * This changes redirection based on the command
+ */
+void setIO(Command * cmd) {
+    parseAndCleanCmd(cmd);
+    freopen("test_output.txt", "a+", stdout); 
+    freopen("test_input.txt", "a+", stdin);
+}
+
 void create_child(Command *cmd) {
     uint32_t child_pid;
     int stat;
@@ -18,6 +31,7 @@ void create_child(Command *cmd) {
         //cmd->argv[cmd->argc - 1] = '\0';
         //printf("PROC: %s || cmd->argv[0]: %s\n", childArgv[0], childArgv[1]); 
         // FIXME this needs to exit if there is an issue with the execution
+        setIO(cmd);
         if (-1 == execvp(childArgv[0], childArgv)) {
             printf("Error, quiting\n");
             exit(-1);
