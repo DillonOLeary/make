@@ -1,0 +1,6 @@
+test_echo > testout.txt
+test_echo > testout.txt
+test_echo > testout.txt
+test_echo > testout.txt
+test_echo > testout.txt
+test_echo

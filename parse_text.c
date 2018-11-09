@@ -115,6 +115,7 @@ char** cleanArgArray(char** uncleanArray, int len, int* resultLen) {
  * redirects. Will throw an error if the redirect
  * is attempted to be set twice
  */
+/*
 void setRedirects(char** cmdTokens, Command* cmd) {
     cmd->argc = 0;
     int numElem = 0;
@@ -151,6 +152,7 @@ void setRedirects(char** cmdTokens, Command* cmd) {
     }
     cmd->argv = cleanArgArray(cmdTokens, numElem, &(cmd->argc));
 }
+*/
 
 
 /** DEPRECATED!
@@ -222,16 +224,16 @@ void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
         BuildSpec *buildSpec = get_last_build_spec(buildSpecList);
         Command *cmd = malloc(sizeof(Command));
         char** cmdTokens = tokenize(line, &cmdsLen);
-        cmd->output = stdout;
-        cmd->input = stdin;
+        cmd->output = NULL;
+        cmd->input = NULL;
         cmd->inputSet = 0;
         cmd->outputSet = 0;
         cmd->argv = cmdTokens;
         // FIXME make sure this next thing works
-        setRedirects(cmdTokens, cmd);
+        //setRedirects(cmdTokens, cmd);
         //printf("The first arg is %s\n", cmd->argv[0]);
-        //cmd->argv = cmdTolkens;
-        //cmd->argc = cmdsLen;
+        cmd->argv = cmdTokens;
+        cmd->argc = cmdsLen;
         append_cmd_to_buildspec(buildSpec, cmd);
         free(line);
         return;

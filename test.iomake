@@ -1,0 +1,3 @@
+test: make.c
+	echo test_echo > testout.txt
+
