@@ -91,7 +91,6 @@ void visitNode(DAG_map * map, BuildSpecNode * node, CommandList * cmdList) {
     node->permMark = 1;
 //    add n to head of L
     //Command** cmds = node->data->cmds;
-    // FIXME should we not run this if it is the root node?
     if (-1 == shouldExec(map, node)) {
         return;
     }
@@ -104,7 +103,6 @@ int getCommandList(CommandList * cmdList, BuildSpecList * list) {
     initHashMap(&map, list);
     // create a list of commands
     visitNode(&map, lookup(&map, map.root), cmdList);
-    Command* currCmd = cmdList->frstCmd;
     return 0;
 }
 
