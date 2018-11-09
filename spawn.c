@@ -38,7 +38,9 @@ void parseAndCleanCmd(Command* cmd) {
             newArgv[newArrLen++] = cmd->argv[i];
         }
     }
-    if ( newArgv[newArrLen - 1] != NULL) {
+    if ( newArrLen == 0) {
+        newArgv[newArrLen++] = NULL;
+    } else if ( newArgv[newArrLen - 1] != NULL) {
         newArgv[newArrLen++] = NULL;
     }
     cmd->argv = newArgv;
