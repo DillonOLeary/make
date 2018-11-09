@@ -305,6 +305,11 @@ FILE *open_makefile(bool fflag, char *filename) {
             }
         }
     }
-    return *fptr;
+    /* IMPORTANT: This throws a warning in Clang but it is just because we
+     * this isnt being freed. However it is just allocated once and is used all 
+     * over the program so it would end up being more trouble and causeing more
+     * potential bugs to free it near the end than it is to just leave it be */
+
+    return *fptr;                   
 }
 
