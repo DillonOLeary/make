@@ -78,12 +78,17 @@ void create_child(Command *cmd) {
     } else {
         // Parent
         while (wait(&stat) != (int) child_pid);
+        if (WEXITSTATUS(stat) != 0) {
+            fprintf(stderr, "Error executing command, ending program...\n"); 
+            exit(1);
+        }
+    
     }
     
-    if (WEXITSTATUS(&stat) == WEXITSTATUS(-1)) {
-        fprintf(stderr, "Error executing command, ending program...\n"); 
-        exit(-1);
-    }
+    //if (WEXITSTATUS(stat) == WEXITSTATUS(-1)) {
+    //    fprintf(stderr, "Error executing command, ending program...\n"); 
+    //    exit(-1);
+    //}
 }
 
 /* Creates each process (or child) */
