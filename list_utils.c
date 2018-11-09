@@ -1,3 +1,7 @@
+/**
+ * authors: Dillon O'Leary
+ * Ezra Boley
+ */
 #include "list_utils.h"
 
 

@@ -1,3 +1,7 @@
+/**
+ * authors: Dillon O'Leary
+ * Ezra Boley
+ */
 #include "parser.h"
 #include "list_utils.h"
 #include <unistd.h>

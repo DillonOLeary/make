@@ -1,3 +1,7 @@
+/**
+ * authors: Dillon O'Leary
+ * Ezra Boley
+ */
 #ifndef __LIST__UTILS_H__
 #define __LIST__UTILS_H__
 #include "parser.h"

@@ -1,4 +1,8 @@
 /**
+ * authors: Dillon O'Leary
+ * Ezra Boley
+ */
+/**
  * This module takes in a list of build specs as input,
  * assuming the fist element in the list is the root target,
  * and does a deep check of the build specs and logic of the

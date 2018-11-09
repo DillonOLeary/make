@@ -1,3 +1,7 @@
+/**
+ * authors: Dillon O'Leary
+ * Ezra Boley
+ */
 #include "parse_text.h"
 #include "parser.h"
 #include "list_utils.h"

@@ -1,4 +1,8 @@
 /**
+ * authors: Dillon O'Leary
+ * Ezra Boley
+ */
+/**
  *  This module is responsible for parsing a makefile
  *  and returning a build specifications list
  */

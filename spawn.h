@@ -1,3 +1,7 @@
+/**
+ * authors: Dillon O'Leary
+ * Ezra Boley
+ */
 #ifndef __SPAWN_H__
 #define __SPAWN_H__
 

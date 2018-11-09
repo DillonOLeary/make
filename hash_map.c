@@ -1,3 +1,7 @@
+/**
+ * authors: Dillon O'Leary
+ * Ezra Boley
+ */
 #include "hash_map.h"
 #include "parser.h"
 #include "list_utils.h"
