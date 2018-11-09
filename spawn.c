@@ -68,8 +68,6 @@ void create_child(Command *cmd) {
     if (childArgv[0] == NULL) return;
     if ((child_pid = fork()) == 0) {
         // Child
-        
-        //cmd->argv[cmd->argc - 1] = '\0';
         setIO(cmd);
         
         if (-1 == execvp(childArgv[0], childArgv)) {
@@ -82,7 +80,7 @@ void create_child(Command *cmd) {
         while (wait(&stat) != (int) child_pid);
     }
     
-    if (WEXITSTATUS(stat) == WEXITSTATUS(-1)) {
+    if (WEXITSTATUS(&stat) == WEXITSTATUS(-1)) {
         fprintf(stderr, "Error executing command, ending program...\n"); 
         exit(-1);
     }
