@@ -3,8 +3,13 @@
 
 #include <stdbool.h>
 
-#define MAX_ARG_LENGTH 256
-void parse_args(int argc, char *argv[], bool *fflag, char *filename, char* root);
+#define MAX_ARG_LENGTH 1024
+
+/* 
+ * Handles just the flag based arguement parsing, to make sure that
+ * valid input is given
+ */
+void parse_args(int argc, char *argv[], bool *fflag, char *filename);
 
 
 #endif

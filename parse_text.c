@@ -10,9 +10,10 @@
 
 
 int getBuildSpecList(BuildSpecList *specs, FILE *fp) {
-    char *file_line;
-    bool isEnd = false;
-    int lineNum = 0;
+    char *file_line;        // Points to the incoming line
+    bool isEnd = false;     // Flag set at the EOF mark so control loop knows when to end
+    int lineNum = 0;        // Keeps track of line number for error messages
+    /* Read line in, check if valid, parse the line into the specs of project */
     while (!isEnd) {
         lineNum++;
         file_line = get_file_line(fp, &isEnd, lineNum);
@@ -29,44 +30,47 @@ char **tokenize(char *line, int *depsLen) {
     char **tokenList = calloc(MAX_LINE_LENGTH, sizeof(char *));
     char *buf = calloc(MAX_LINE_LENGTH, sizeof(char));
     char c;
-    int i;
     int tokenCount = 0;
     int stringLength = 0;
       
-    for (i = 0; i < MAX_LINE_LENGTH; i++) { 
-        if (line[i] == '\t') continue;
-        buf[stringLength] = line[i];
+    for (int i = 0; i < MAX_LINE_LENGTH; i++) { 
+        if (line[i] == '\t') continue;  // Avoids counting a tab as a token
+        buf[stringLength] = line[i];    
         
-        if (buf[stringLength] == '#') break;
+        if (buf[stringLength] == '#') break;    // If we hit a comment, stop tokenizing
         
+        /* Split the string on a space or at the end of the line, then put that in an array of words */
         if (buf[stringLength] == ' ' || buf[stringLength] == '\n' || buf[stringLength] == EOF) {
-            if (line[i - 1] == ' ') continue;
-            //if (stringLength == 0) continue;
-            c = buf[stringLength];
-            buf[stringLength++] = '\0'; // Probably good to give it a null terminator
+            if (line[i - 1] == ' ') continue;   // To avoid creating a token that is just a space
+            c = buf[stringLength];      
+            buf[stringLength++] = '\0'; // Good to give it a null terminator
             tokenList[tokenCount] = calloc(stringLength, sizeof(char));
+
+            if (tokenList[tokenCount] == NULL) {
+                fprintf(stderr, "Failed to allocate memory. Exiting...\n");
+                exit(1);
+            }
             
             if (strcpy(tokenList[tokenCount++], buf) == NULL) {
-                printf("Failed to copy string, exiting now...\n");
+                fprintf(stderr, "Failed to copy string, exiting now...\n");
                 exit(1);
             }
 
+            /* If at the end of the line we want to leave */
             if (c == '\n' || c == EOF) break;
             stringLength = 0;
             continue;
         }
         stringLength++; 
     }
-
-    /* DEBUG */
-    //for (i = 0; i < tokenCount; i++) {
-    //    printf("token %d: %s\n", i, tokenList[i]);
-    //}
-    
+ 
     *depsLen = tokenCount;
     return tokenList;
 }
 
+/**
+ *  Checks if the string is just spaces and can be skipped
+ */
 bool is_empty(char *line) {
     for (int i = 0; line[i] != '\n' && line[i] != EOF; i++) {
         if (line[i] != ' ') return false;
@@ -84,6 +88,12 @@ char* getIOFilename(char** cmdTolkens, int index) {
         int i;
         for (i = 0; cmdTolkens[index][i] != '\0'; i++);
         retStr = malloc(sizeof(char) * i);
+        
+        if (retStr == NULL) {
+            fprintf(stderr, "Failure to allocate memory. Exiting...\n");
+            exit(1);
+        }
+
         for(int j = 0; j < i - 1; j++) {
             retStr[j] = cmdTolkens[index][j+1];
         }
@@ -154,54 +164,7 @@ void setRedirects(char** cmdTokens, Command* cmd) {
 }
 */
 
-
-/** DEPRECATED!
-void flatten_tokens(char **tokens, int argc, char *flatTokens) {
-    int cnt = 0;
-    for (int i = 0; i < argc; i++) {
-        for (int j = 0; tokens[i][j] != '\0'; j++) {
-            flatTokens[cnt++] = tokens[i][j];
-        }
-        flatTokens[cnt++] = ' ';
-    }
-    flatTokens[cnt++] = '\n';
-}
-
-int check_target(char **tokens, int *argc) {
-    char flattenBuf[MAX_LINE_LENGTH];
-
-    for (int i = 0; i < *argc; i++) {
-        for (int j = 0; tokens[i][j] != '\0'; j++) {
-            if (tokens[i][j] == ':') {
-                if (j == 0) {
-                    // Remove ":" from list
-                    for (int k = i; k < *argc - 1; k++) {
-                        tokens[k] = tokens[k + 1];
-                    }
-                    *argc = *argc - 1;    
-                } else {
-                    // Remove ':' from string
-                    if (tokens[i][j + 1] == '\0') {
-                        tokens[i][j] = '\0';
-                    } else {
-                        tokens[i][j] = ' ';
-                        flatten_tokens(tokens, *argc, flattenBuf);
-                        printf("FLATTENED BUF: %s\n", flattenBuf);
-                        tokens = tokenize(flattenBuf, argc);    // Its just crazy enough to work
-                        printf("ARGC: %d\n", *argc);
-                    }
-                }
-                return 0;
-            }
-        }
-    }
-    return 1;
-}
-
-*/
-
-
-// This works instead of all of the above code haha
+// Removes the colon if there is one
 int check_colon(char *line) {
     for (int i = 0; i < MAX_LINE_LENGTH; i++) {
         if (line[i] == ':') {
@@ -212,26 +175,30 @@ int check_colon(char *line) {
     return 1;
 }
 
+
 void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
     char c = line[0];
-    int i;
     int cmdsLen;
     char **tokens;
         
-    if (c == '#') return;
-    // Must be a line of commands
+    if (c == '#') return;   // Ignore comments
+    // starts with tab, must be a line of commands
     if (c == '\t') {
         BuildSpec *buildSpec = get_last_build_spec(buildSpecList);
         Command *cmd = malloc(sizeof(Command));
+        
+        if (cmd == NULL) {
+            fprintf(stderr, "Error allocating memory. Exiting...\n");
+            exit(1);
+        }
+
         char** cmdTokens = tokenize(line, &cmdsLen);
         cmd->output = NULL;
         cmd->input = NULL;
         cmd->inputSet = 0;
         cmd->outputSet = 0;
         cmd->argv = cmdTokens;
-        // FIXME make sure this next thing works
         //setRedirects(cmdTokens, cmd);
-        //printf("The first arg is %s\n", cmd->argv[0]);
         cmd->argv = cmdTokens;
         cmd->argc = cmdsLen;
         append_cmd_to_buildspec(buildSpec, cmd);
@@ -251,27 +218,33 @@ void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
     if (check_colon(line)) {
         fprintf(stderr, "%d: Invalid line, neither a target nor a command\n", lineNum);
         exit(1);
-    }  // Add checking to see if there is a colon
+    }  // Checking to see if there is a colon to remove
 
     tokens = tokenize(line, &cmdsLen);
     
     BuildSpec *buildSpec = malloc(sizeof(BuildSpec));
     
-    buildSpec->target = tokens[0];
-  
-  // DEBUG  
-//    for (i = 0; i < cmdsLen; i++) {
-//        printf("TOKEN %d: %s\n", i, tokens[i]); 
-//    }
+    if (buildSpec == NULL) {
+        fprintf(stderr, "Failure to allocate memory. Exiting...\n");
+        exit(1);
+    }
 
+    buildSpec->target = tokens[0];
+    
     append_build_spec(buildSpecList, buildSpec);
-    for (i = 1; i < cmdsLen; i++) {
+
+    /* Shift each token over to get just dependencies */
+    for (int i = 1; i < cmdsLen; i++) {
         tokens[i - 1] = tokens[i];
     }
 
     buildSpec->deps = tokens;
     buildSpec->depsLen = cmdsLen - 1;
     buildSpec->cmds = malloc(sizeof(CommandList));
+    if (buildSpec->cmds == NULL) {
+        fprintf(stderr, "Failure to allocate memory. Exiting...\n");
+        exit(1);
+    }
     buildSpec->cmds->len = 0;
     free(line);
 }
@@ -279,6 +252,11 @@ void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
 char *get_file_line(FILE *fp, bool *isEnd, int lineNum) {
     char *input = malloc(MAX_LINE_LENGTH * sizeof(char));
    
+    if (input == NULL) {
+        fprintf(stderr, "Failure to allocate memory. Exiting...\n");
+        exit(1);
+    }
+
     for (int i = 0; i < MAX_LINE_LENGTH; i++) {
         input[i] = fgetc(fp);
         if (input[i] == '\n' || input[i] == EOF) {
@@ -297,6 +275,12 @@ char *get_file_line(FILE *fp, bool *isEnd, int lineNum) {
 
 FILE *open_makefile(bool fflag, char *filename) {
     FILE **fptr = malloc(sizeof(FILE *));
+    
+    if (fptr == NULL) {
+        fprintf(stderr, "Failure to allocate memory. Exiting...\n");
+        exit(1);
+    }
+
     if (fflag) {
         *fptr = fopen(filename, "r");
         if (*fptr == NULL) {

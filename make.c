@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
     } else if (argc == 2) {
         root = argv[1];
     }
-    parse_args(argc, argv, &fflag, filename, root);
+    parse_args(argc, argv, &fflag, filename);
     fp = open_makefile(fflag, filename);
     getBuildSpecList(&specs, fp);
     if (root == NULL)

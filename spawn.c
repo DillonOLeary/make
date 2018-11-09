@@ -66,12 +66,10 @@ void create_child(Command *cmd) {
         // Child
         
         //cmd->argv[cmd->argc - 1] = '\0';
-        //printf("PROC: %s || cmd->argv[0]: %s\n", childArgv[0], childArgv[1]); 
-        // FIXME this needs to exit if there is an issue with the execution
         setIO(cmd);
         if (-1 == execvp(childArgv[0], childArgv)) {
             printf("Error, quiting\n");
-            exit(-1);
+            exit(1);
         }
         
     } else {
@@ -85,7 +83,7 @@ void create_child(Command *cmd) {
     }
 }
 
-/* Creates da kids */
+/* Creates each process (or child) */
 void create_family(CommandList *cmdlist) {
     Command *cmd;
     cmd = cmdlist->frstCmd;
