@@ -74,7 +74,7 @@ void create_child(Command *cmd) {
         
     } else {
         // Parent
-        while (wait(&stat) != child_pid);
+        while (wait(&stat) != (int) child_pid);
     }
     
     if (WEXITSTATUS(stat) == WEXITSTATUS(-1)) {

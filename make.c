@@ -9,7 +9,7 @@
 #include "spawn.h"
 #include "parse_args.h"
 #include <string.h>
-
+#include <stdlib.h>
 
 int main(int argc, char *argv[]) {
     FILE * fp;
@@ -35,6 +35,7 @@ int main(int argc, char *argv[]) {
     parse_args(argc, argv, &fflag, filename);
     fp = open_makefile(fflag, filename);
     getBuildSpecList(&specs, fp);
+      
     if (root == NULL)
         specs.root = specs.frstBS->target;
     else specs.root = root;

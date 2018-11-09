@@ -65,6 +65,9 @@ char **tokenize(char *line, int *depsLen) {
     }
  
     *depsLen = tokenCount;
+    if (buf != NULL) {
+        free(buf);
+    }
     return tokenList;
 }
 
