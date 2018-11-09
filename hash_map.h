@@ -1,3 +1,7 @@
+/**
+ * authors: Dillon O'Leary
+ * Ezra Boley
+ */
 /** This module is used by the assess_specs
  * module to speed up the parsing through the
  * tree. It assumes that the map will remain at

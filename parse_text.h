@@ -1,3 +1,7 @@
+/**
+ * authors: Dillon O'Leary
+ * Ezra Boley
+ */
 #ifndef __PARSE_TEXT__H__
 #define __PARSE_TEXT__H__
 #include <stdio.h>

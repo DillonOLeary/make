@@ -1,3 +1,7 @@
+/**
+ * authors: Dillon O'Leary
+ * Ezra Boley
+ */
 #include <stdlib.h>
 #include "assess_specs.h"
 #include "hash_map.h"
