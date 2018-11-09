@@ -16,7 +16,6 @@ time_t getLastMod(char* filename) {
         //exit(-1);
         return 0;
     }
-    //printf("File: %s Last mod: %s\n", filename, ctime(&buf.st_mtime));
     return buf.st_mtime;
 }
 
@@ -36,11 +35,9 @@ int checkDeps(DAG_map * map, BuildSpecNode* node) {
             return 1;
         }
         if (getLastMod(node->data->target) < getLastMod(node->data->deps[i])) {
-            //printf("The target file %s was modified before the dep file %s !\n", node->data->target, node->data->deps[i]);
             return 1;
         }
     }
-    //printf("None of the deps have been modified since the target %s was modified. Deps len %d\n", node->data->target, node->data->depsLen);
     return -1;
 }
 
@@ -53,7 +50,6 @@ int shouldExec(DAG_map* map, BuildSpecNode * node) {
     // check if it's a file
     struct stat buf;
     if (-1 == stat(node->data->target, &buf)) {
-        fprintf(stderr, "Cannot open target file: '%s', assume it is a phony target!\n", node->data->target);
         return 1;
     }
     // check the dependencies
@@ -101,10 +97,6 @@ void visitNode(DAG_map * map, BuildSpecNode * node, CommandList * cmdList) {
     }
     add_cmd_to_list(node, cmdList);
     return;
-    //if (targetOlderThanDeps(node->data->target, node->data->deps,
-    //            node->data->depsLen)) {
-    //    return;
-    //}
 }
 int getCommandList(CommandList * cmdList, BuildSpecList * list) {
     init_cmd_list(cmdList);
@@ -113,13 +105,6 @@ int getCommandList(CommandList * cmdList, BuildSpecList * list) {
     // create a list of commands
     visitNode(&map, lookup(&map, map.root), cmdList);
     Command* currCmd = cmdList->frstCmd;
-    for (int i=0; i<cmdList->len; i++) {
-        for (int j=0; j < currCmd->argc; j++) {
-            printf("%s ", currCmd->argv[j]);
-        }
-        currCmd = currCmd->nxtCmd;
-        printf("\nThe %d command above\n", i); 
-    }
     return 0;
 }
 

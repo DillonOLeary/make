@@ -9,30 +9,27 @@
 void parseAndCleanCmd(Command* cmd) {
     char** newArgv = malloc(sizeof(char*) * (cmd->argc + 1));
     int newArrLen = 0;
-    printf("reached method, argc: %d\n", cmd->argc);
     for (int i=0;i<cmd->argc;i++) {
         // FIXME assume there is a spce between the < > and the filenames
-        printf("Inside the loop: part of command%s\n",cmd->argv[i]);
         if (cmd->argv[i][0] == '>') {
-            printf("reached a set output\n");
             if (cmd->outputSet == 1) {
-                fprintf(stderr, "Cannot set output twice!");
+                fprintf(stderr, "Cannot set output twice!\n");
                 exit(-1);
             }
             cmd->outputSet = 1;
             if ( (i + 1) > cmd->argc) {
-                fprintf(stderr, "No output file specified");
+                fprintf(stderr, "No output file specified\n");
                 exit(-1);
             }
             cmd->output = cmd->argv[i++ + 1]; 
         } else if (cmd->argv[i][0] == '<') {
             if (cmd->inputSet == 1) {
-                fprintf(stderr, "Cannot set input twice!");
+                fprintf(stderr, "Cannot set input twice!\n");
                 exit(-1);
             }
             cmd->inputSet = 1;
             if ( (i + 1) > cmd->argc) {
-                fprintf(stderr, "No input file specified");
+                fprintf(stderr, "No input file specified\n");
                 exit(-1);
             }
             cmd->input = cmd->argv[i++ + 1]; 
@@ -46,14 +43,12 @@ void parseAndCleanCmd(Command* cmd) {
     }
     cmd->argv = newArgv;
     cmd->argc = newArrLen;
-    printf("arg1 %s, arg2 %s, len: %d\n", cmd->argv[0], cmd->argv[1], cmd->argc);
 }
 
 /**
  * This changes redirection based on the command
  */
 void setIO(Command * cmd) {
-    printf("setting io!output to  %s\n",cmd->output);
     if (cmd->outputSet == 1)
         freopen(cmd->output, "a+", stdout); 
     if (cmd->inputSet == 1)
