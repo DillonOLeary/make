@@ -66,13 +66,13 @@ void create_child(Command *cmd) {
     childArgv[cmd->argc] = NULL;
     if ((child_pid = fork()) == 0) {
         // Child
-        
-        //cmd->argv[cmd->argc - 1] = '\0';
         setIO(cmd);
-        if (-1 == execvp(childArgv[0], childArgv)) {
-            printf("Error, quiting\n");
-            exit(1);
-        }
+        if (childArgv[0] != NULL) {
+            if (-1 == execvp(childArgv[0], childArgv)) {
+                printf("Error, quiting\n");
+                exit(1);
+            }
+        } 
         
     } else {
         // Parent
