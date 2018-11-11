@@ -8,7 +8,10 @@
 #include <stdbool.h>
 #include "parser.h"
 
+// This file is more of the low level implentation of the parser
+// than the parser.h which is more in charge of API
 
+/* Splits the strings into individual words */
 char **tokenize(char *line, int *depsLen);
 
 /*

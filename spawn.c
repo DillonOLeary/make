@@ -70,6 +70,9 @@ void create_child(Command *cmd) {
     childArgv[cmd->argc] = NULL;
     if (childArgv == NULL) return;
     if (childArgv[0] == NULL) return;
+    for (int i = 0; i < cmd->argc - 1; i++)    
+        printf("%s ", childArgv[i]);
+    printf("\n");
     if ((child_pid = fork()) == 0) {
         // Child
         setIO(cmd);
