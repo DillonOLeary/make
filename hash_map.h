@@ -22,6 +22,8 @@ typedef struct BuildSpecNode {
     BuildSpec * data;
     char ** children;
     int hasExec;
+    int isDummy;
+    // whether the node is just a dummy node
 } BuildSpecNode;
 
 // Directed Acyclic Graph mapped with a
