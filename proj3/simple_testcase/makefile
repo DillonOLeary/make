@@ -6,7 +6,7 @@ all: prog1 prog2 prog3
 prog1 : main1.o queue.o reader.o writer.o
 	echo Building prog1
 
-	gcc -o prog1 main1.o que.o reader.o writer.o
+	gcc -o prog1 main1.o queue.o reader.o writer.o
 
 	echo prog1 build successfully
 
@@ -46,7 +46,7 @@ parser.o: parser.c parser.h
 
 main3.o: main3.c process1.h process2.h graph.h djikstra.h
 	echo Building main3.o!
-	gcc -c mai3.c
+	gcc -c main3.c
 
 
 process1.o: process1.c process1.h graph.h djikstra.h
