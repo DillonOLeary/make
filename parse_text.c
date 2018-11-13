@@ -13,22 +13,25 @@
 #define MAX_LINE_LENGTH 1024
 
 
-int getBuildSpecList(BuildSpecList *specs, FILE *fp) {
-    char *file_line;        // Points to the incoming line
+int get_build_spec_list(BuildSpecList *specs, bool fflag, char *filename) {
+    FILE **fp = open_makefile(fflag, filename);
+    char file_line[MAX_LINE_LENGTH];        // Points to the incoming line
     bool isEnd = false;     // Flag set at the EOF mark so control loop knows when to end
     int lineNum = 0;        // Keeps track of line number for error messages
     /* Read line in, check if valid, parse the line into the specs of project */
     while (!isEnd) {
         lineNum++;
-        file_line = get_file_line(fp, &isEnd, lineNum);
+        get_file_line(*fp, &isEnd, lineNum, file_line);
         if (file_line == NULL) continue;
         parse_line(file_line, specs, lineNum);
     }
+    fclose(*fp);
+    free(fp);
     return 0;
 }
 
 
-char **tokenize(char *line, int *depsLen) {
+char **tokenize(char *line, int *depsLen) {//, BuildSpecList *bsl) {
     /* Allocate a buffer for ind. words and one for the list. They both need
      * to be max length in case our line is one really long word */
     char **tokenList = calloc(MAX_LINE_LENGTH, sizeof(char *));
@@ -208,7 +211,6 @@ void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
         cmd->argv = cmdTokens;
         cmd->argc = cmdsLen;
         append_cmd_to_buildspec(buildSpec, cmd);
-        free(line);
         return;
     }
     if (c == '\n' || c == EOF) return;  // Need a further check
@@ -226,7 +228,7 @@ void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
         exit(1);
     }  // Checking to see if there is a colon to remove
 
-    tokens = tokenize(line, &cmdsLen);
+    tokens = tokenize(line, &cmdsLen);//, );
     
     BuildSpec *buildSpec = malloc(sizeof(BuildSpec));
     
@@ -252,22 +254,15 @@ void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
         exit(1);
     }
     buildSpec->cmds->len = 0;
-    free(line);
 }
 
-char *get_file_line(FILE *fp, bool *isEnd, int lineNum) {
-    char *input = malloc(MAX_LINE_LENGTH * sizeof(char));
-   
-    if (input == NULL) {
-        fprintf(stderr, "Failure to allocate memory. Exiting...\n");
-        exit(1);
-    }
-
+void get_file_line(FILE *fp, bool *isEnd, int lineNum, char *input) {
+    
     for (int i = 0; i < MAX_LINE_LENGTH; i++) {
         input[i] = fgetc(fp);
         if (input[i] == '\n' || input[i] == EOF) {
             if (input[i] == EOF) *isEnd = true;
-            return input;
+            return;
         }
         if (input[i] == '\0') {
             fprintf(stderr, "%d: Invalid Null char mid line\n", lineNum);
@@ -276,10 +271,10 @@ char *get_file_line(FILE *fp, bool *isEnd, int lineNum) {
     }
     fprintf(stderr, "%d: Line too long, ignoring\n", lineNum);
     exit(1);
-    return NULL;
 }
 
-FILE *open_makefile(bool fflag, char *filename) {
+
+FILE **open_makefile(bool fflag, char *filename) {
     FILE **fptr = malloc(sizeof(FILE *));
     
     if (fptr == NULL) {
@@ -310,6 +305,6 @@ FILE *open_makefile(bool fflag, char *filename) {
      * over the program so it would end up being more trouble and causeing more
      * potential bugs to free it near the end than it is to just leave it be */
 
-    return *fptr;                   
+    return fptr;                   
 }
 

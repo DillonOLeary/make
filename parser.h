@@ -50,6 +50,6 @@ typedef struct {
  *  spec list, making the syntax is right
  *  returns 0 on success, exits on failure.
  */
-int getBuildSpecList(BuildSpecList* specs, FILE* fp);
+//int getBuildSpecList(BuildSpecList* specs, FILE* fp);
 
 #endif

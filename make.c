@@ -16,7 +16,6 @@
 #include <stdlib.h>
 
 int main(int argc, char *argv[]) {
-    FILE * fp;
     BuildSpecList specs;
     char *root = NULL; // the root node. If it's not specified then
     // its assumed to be the first build spec
@@ -37,12 +36,39 @@ int main(int argc, char *argv[]) {
         root = argv[1];
     }
     parse_args(argc, argv, &fflag, filename);
-    fp = open_makefile(fflag, filename);
-    getBuildSpecList(&specs, fp);
+    get_build_spec_list(&specs, fflag, filename);
       
     if (root == NULL)
         specs.root = specs.frstBS->target;
     else specs.root = root;
     getCommandList(&cmdList, &specs);
+    BuildSpec *curr_bs = specs.frstBS;
+    BuildSpec *prev_bs;
+    Command   *curr_cmd = curr_bs->cmds->frstCmd;
+    Command   *prev_cmd;
+    // FREE THE LIST!
+    /*
+    for (int i = 0; i < specs.len; i++) {
+        for (int j = 0; j < curr_bs->cmds->len; j++) {
+            for (int k = 0; k < curr_cmd->argc; k++) {
+                free(curr_cmd->argv[k]);
+                printf("HERE0\n");
+            }
+            //free(curr_cmd->argv);
+            printf("here1\n");
+            prev_cmd = curr_cmd;
+            curr_cmd = curr_cmd->nxtCmd;
+            free(prev_cmd);
+            printf("here2\n");
+        }
+        free(curr_bs->cmds);
+        printf("here3\n");
+        prev_bs = curr_bs;
+        curr_bs = curr_bs->nxtBuildSpec;
+        free(prev_bs);
+        printf("here4\n");
+    }
+    printf("DONE\n");
+    */
     create_family(&cmdList);
 }
