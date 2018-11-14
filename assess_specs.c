@@ -109,6 +109,7 @@ void visitNode(DAG_map * map, BuildSpecNode * node, CommandList * cmdList) {
 int getCommandList(DAG_map * map, CommandList * cmdList, BuildSpecList * list) {
     init_cmd_list(cmdList);
     initHashMap(map, list);
+    free(list);
     // create a list of commands
     visitNode(map, lookup(map, map->root), cmdList);
     freeHashMap(map);
