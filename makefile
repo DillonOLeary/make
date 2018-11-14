@@ -3,11 +3,14 @@ WARNING_FLAGS = -g -Wall -Wextra
 EXE = 537make
 SCAN_BUILD_DIR = scan-build-out
 
-537make: make.o assess_specs.o hash_map.o spawn.o parse_text.o list_utils.o parse_args.o
-	$(CC) -o $(EXE) make.o assess_specs.o spawn.o parser.h hash_map.o parse_text.o list_utils.o parse_args.o 
+537make: free_str.o make.o assess_specs.o hash_map.o spawn.o parse_text.o list_utils.o parse_args.o
+	$(CC) -o $(EXE) make.o free_str.o assess_specs.o spawn.o parser.h hash_map.o parse_text.o list_utils.o parse_args.o 
 
 make.o: make.c
 	$(CC) $(WARNING_FLAGS) -c make.c
+
+free_str.o: free_str.h free_str.c
+	$(CC) $(WARNING_FLAGS) -c free_str.c
 
 assess_specs.o: assess_specs.c assess_specs.h
 	$(CC) $(WARNING_FLAGS) -c assess_specs.c

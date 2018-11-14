@@ -1,3 +1,7 @@
+/**
+ * authors: Dillon O'Leary
+ * Ezra Boley
+ */
 #ifndef __PARSE_ARG_H__
 #define __PARSE_ARG_H__
 

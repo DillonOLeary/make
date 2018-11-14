@@ -1,7 +1,12 @@
+/**
+ * authors: Dillon O'Leary
+ * Ezra Boley
+ */
 #include <stdlib.h>
 #include "assess_specs.h"
 #include "hash_map.h"
 #include "list_utils.h"
+#include "free_str.h"
 #include <string.h>
 #include <time.h>
 #include <sys/types.h>
@@ -85,7 +90,11 @@ void visitNode(DAG_map * map, BuildSpecNode * node, CommandList * cmdList) {
 //    for each node m with an edge from n to m do
 //        visit(m)
     for (int i=0; i<node->data->depsLen; i++) {
-        visitNode(map, lookup(map, node->data->deps[i]), cmdList);
+        BuildSpecNode * temp = lookup(map, node->data->deps[i]);
+        visitNode(map, temp, cmdList);
+        if (temp->isDummy == 1) {
+            freeNode(temp);
+        }
     }
 //    mark n permanently
     node->permMark = 1;
@@ -103,6 +112,7 @@ int getCommandList(CommandList * cmdList, BuildSpecList * list) {
     initHashMap(&map, list);
     // create a list of commands
     visitNode(&map, lookup(&map, map.root), cmdList);
+    freeHashMap(&map);
     return 0;
 }
 

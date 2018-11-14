@@ -1,3 +1,7 @@
+/**
+ * authors: Dillon O'Leary
+ * Ezra Boley
+ */
 #include <stdlib.h>
 #include <stdbool.h>
 #include <unistd.h>

@@ -1,4 +1,8 @@
 /**
+ * authors: Dillon O'Leary
+ * Ezra Boley
+ */
+/**
  *  This module is responsible for parsing a makefile
  *  and returning a build specifications list
  */
@@ -46,6 +50,6 @@ typedef struct {
  *  spec list, making the syntax is right
  *  returns 0 on success, exits on failure.
  */
-int getBuildSpecList(BuildSpecList* specs, FILE* fp);
+//int getBuildSpecList(BuildSpecList* specs, FILE* fp);
 
 #endif
