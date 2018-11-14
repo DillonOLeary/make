@@ -36,11 +36,21 @@ int checkDeps(DAG_map * map, BuildSpecNode* node) {
     for (int i=0; i<node->data->depsLen; i++) {
         // in this case, one of the deps is a target which has 
         // added its cmds to the cmd list
-        if (1 == lookup(map, node->data->deps[i])->hasExec) {
+        BuildSpecNode * temp = lookup(map, node->data->deps[i]);
+        if (1 == temp->hasExec) {
+            if (temp->isDummy == 1) {
+                freeNode(temp);
+            }
             return 1;
         }
         if (getLastMod(node->data->target) < getLastMod(node->data->deps[i])) {
+            if (temp->isDummy == 1) {
+                freeNode(temp);
+            }
             return 1;
+        }
+        if (temp->isDummy == 1) {
+            freeNode(temp);
         }
     }
     return -1;

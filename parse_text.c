@@ -207,7 +207,6 @@ void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
         cmd->inputSet = 0;
         cmd->outputSet = 0;
         cmd->argv = cmdTokens;
-        //setRedirects(cmdTokens, cmd);
         cmd->argv = cmdTokens;
         cmd->argc = cmdsLen;
         append_cmd_to_buildspec(buildSpec, cmd);
@@ -228,6 +227,7 @@ void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
         exit(1);
     }  // Checking to see if there is a colon to remove
 
+
     tokens = tokenize(line, &cmdsLen);//, );
     
     BuildSpec *buildSpec = malloc(sizeof(BuildSpec));
@@ -247,6 +247,7 @@ void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
     }
 
     buildSpec->deps = tokens;
+    tokens = NULL;
     buildSpec->depsLen = cmdsLen - 1;
     buildSpec->cmds = malloc(sizeof(CommandList));
     if (buildSpec->cmds == NULL) {
