@@ -1,5 +1,5 @@
 CC = gcc
-WARNING_FLAGS = -g -Wall -Wextra
+WARNING_FLAGS = -o0 -g -Wall -Wextra
 EXE = 537make
 SCAN_BUILD_DIR = scan-build-out
 

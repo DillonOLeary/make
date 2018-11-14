@@ -13,6 +13,7 @@
 #ifndef __assess__specs_h__
 #define __assess__specs_h__
 #include "parser.h"
+#include "hash_map.h"
 // The list of commands
 //typedef struct {
 //    Command ** list;
@@ -29,6 +30,6 @@
  * check the logic of the spec list provided
  * Returns 0 on success, exits on failure
  */
-int getCommandList(CommandList * cmdList, BuildSpecList * list);
+int getCommandList(DAG_map * map, CommandList * cmdList, BuildSpecList * list);
 
 #endif

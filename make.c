@@ -9,9 +9,11 @@
  */
 #include "assess_specs.h"
 #include "parser.h"
+#include "hash_map.h"
 #include "parse_text.h"
 #include "spawn.h"
 #include "parse_args.h"
+#include "free_str.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -41,7 +43,8 @@ int main(int argc, char *argv[]) {
     if (root == NULL)
         specs.root = specs.frstBS->target;
     else specs.root = root;
-    getCommandList(&cmdList, &specs);
+    DAG_map map;
+    getCommandList(&map, &cmdList, &specs);
     BuildSpec *curr_bs = specs.frstBS;
     BuildSpec *prev_bs;
     Command   *curr_cmd = curr_bs->cmds->frstCmd;
@@ -74,4 +77,5 @@ int main(int argc, char *argv[]) {
     printf("DONE\n");
   */  
     create_family(&cmdList);
+    freeHashMap(&map);
 }

@@ -47,7 +47,10 @@ void parseAndCleanCmd(Command* cmd) {
     } else if ( newArgv[newArrLen - 1] != NULL) {
         newArgv[newArrLen++] = NULL;
     }
+    // Pointer for freeing the old array
+    char** temp = cmd->argv;
     cmd->argv = newArgv;
+    free(temp);
     cmd->argc = newArrLen;
 }
 
