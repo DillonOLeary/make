@@ -1,0 +1,642 @@
+diff --git a/.assess_specs.c.swp b/.assess_specs.c.swp
+new file mode 100644
+index 0000000..e69de29
+diff --git a/0 b/0
+new file mode 100644
+index 0000000..a30e3c9
+Binary files /dev/null and b/0 differ
+diff --git a/README.md b/README.md
+index c7bec3c..e297d82 100644
+--- a/README.md
++++ b/README.md
+@@ -5,9 +5,9 @@ Program 3 for cs537
+ ## Program Structure
+ There are three phases that the program goes through. 
+ 
+-First it reads each line of the file using the functions in parse_text.c and compiles a list of targets, commands, and dependencies. 
++First it reads each line of the file using the functions in parse\_text.c and compiles a list of targets, commands, and dependencies. 
+ 
+-Then it uses a hashmap and the functions in assess_specs.c to create a graph of dependencies and that is where it decides which commands need to be run and which can be discarded.
++Then it uses a hashmap and the functions in assess\_specs.c to create a graph of dependencies and that is where it decides which commands need to be run and which can be discarded.
+ 
+ Lastly the compiled list of instructions is passed into spawn.c which is responsible for creating each process and making sure each executes successfully.
+ 
+@@ -16,4 +16,5 @@ make.c contains the main control loop for the program.
+ ## Running
+ 537make accepts a specific target to build as a command line arguement as well as the -f option followed by a specific file name.
+ 
+-
++## Memory Leaks
++When using valgrind, users may notice memory leaks from tokenize, the spec list creator, or the hash map creator. These leaks are intentional because the memory allocated by those functions are used for most of the lifespan of the program.
+diff --git a/assess_specs.c b/assess_specs.c
+index e56ebdf..187ea60 100644
+--- a/assess_specs.c
++++ b/assess_specs.c
+@@ -6,6 +6,7 @@
+ #include "assess_specs.h"
+ #include "hash_map.h"
+ #include "list_utils.h"
++#include "free_str.h"
+ #include <string.h>
+ #include <time.h>
+ #include <sys/types.h>
+@@ -35,12 +36,22 @@ int checkDeps(DAG_map * map, BuildSpecNode* node) {
+     for (int i=0; i<node->data->depsLen; i++) {
+         // in this case, one of the deps is a target which has 
+         // added its cmds to the cmd list
+-        if (1 == lookup(map, node->data->deps[i])->hasExec) {
++        BuildSpecNode * temp = lookup(map, node->data->deps[i]);
++        if (1 == temp->hasExec) {
++            if (temp->isDummy == 1) {
++                freeNode(temp);
++            }
+             return 1;
+         }
+         if (getLastMod(node->data->target) < getLastMod(node->data->deps[i])) {
++            if (temp->isDummy == 1) {
++                freeNode(temp);
++            }
+             return 1;
+         }
++        if (temp->isDummy == 1) {
++            freeNode(temp);
++        }
+     }
+     return -1;
+ }
+@@ -89,7 +100,11 @@ void visitNode(DAG_map * map, BuildSpecNode * node, CommandList * cmdList) {
+ //    for each node m with an edge from n to m do
+ //        visit(m)
+     for (int i=0; i<node->data->depsLen; i++) {
+-        visitNode(map, lookup(map, node->data->deps[i]), cmdList);
++        BuildSpecNode * temp = lookup(map, node->data->deps[i]);
++        visitNode(map, temp, cmdList);
++        if (temp->isDummy == 1) {
++            freeNode(temp);
++        }
+     }
+ //    mark n permanently
+     node->permMark = 1;
+@@ -101,12 +116,15 @@ void visitNode(DAG_map * map, BuildSpecNode * node, CommandList * cmdList) {
+     add_cmd_to_list(node, cmdList);
+     return;
+ }
+-int getCommandList(CommandList * cmdList, BuildSpecList * list) {
++int getCommandList(DAG_map * map, CommandList * cmdList, BuildSpecList * list) {
+     init_cmd_list(cmdList);
+-    DAG_map map;
+-    initHashMap(&map, list);
++    initHashMap(map, list);
+     // create a list of commands
+-    visitNode(&map, lookup(&map, map.root), cmdList);
++    BuildSpecNode * temp = lookup(map, map->root);
++    visitNode(map, temp, cmdList);
++    if (temp->isDummy == 1) {
++        freeNode(temp);
++    }
+     return 0;
+ }
+ 
+diff --git a/assess_specs.h b/assess_specs.h
+index 23b9ee4..9c52e95 100644
+--- a/assess_specs.h
++++ b/assess_specs.h
+@@ -13,6 +13,7 @@
+ #ifndef __assess__specs_h__
+ #define __assess__specs_h__
+ #include "parser.h"
++#include "hash_map.h"
+ // The list of commands
+ //typedef struct {
+ //    Command ** list;
+@@ -29,6 +30,6 @@
+  * check the logic of the spec list provided
+  * Returns 0 on success, exits on failure
+  */
+-int getCommandList(CommandList * cmdList, BuildSpecList * list);
++int getCommandList(DAG_map * map, CommandList * cmdList, BuildSpecList * list);
+ 
+ #endif
+diff --git a/free_str.c b/free_str.c
+new file mode 100644
+index 0000000..e854002
+--- /dev/null
++++ b/free_str.c
+@@ -0,0 +1,50 @@
++#include "free_str.h"
++#include "parser.h"
++#include "hash_map.h"
++#include <stdlib.h>
++
++/**
++ * This will free all the commands in the
++ * list
++ */
++void freeCommandList(CommandList * list) {
++    if (list != NULL) {
++        if (list->frstCmd != NULL) {
++            Command * curr = list->frstCmd;
++            for (int i=0; i<list->len; i++) {
++                free(curr->argv);
++                curr = curr->nxtCmd;
++            }
++            //if (curr != NULL) {
++           //     fprintf(stderr, "the next command is not null! There is AN ISSUE WITH THE COMMANDS, MAYBE THE LENGTH\n");
++           //     exit(-1);
++            //}
++        }
++        free(list);
++    }
++}
++
++void freeBuildSpec(BuildSpec * spec) {
++    if (spec != NULL) {
++        freeCommandList(spec->cmds);
++        free(spec->deps);
++        free(spec);
++    }
++}
++
++void freeNode(BuildSpecNode * node) {
++    if (node != NULL) {
++        freeBuildSpec(node->data);
++        free(node);
++    }
++}
++
++void freeHashMap(DAG_map * map) {
++    if (map == NULL) {
++        fprintf(stderr, "Map is null, ending program...\n");
++    }
++    int i;
++    for(i=0; i<map->size;i++) {
++        freeNode(map->map[i]);
++    }
++}
+diff --git a/free_str.h b/free_str.h
+new file mode 100644
+index 0000000..5d7e187
+--- /dev/null
++++ b/free_str.h
+@@ -0,0 +1,29 @@
++#ifndef __FREE__STR_H__
++#define __FREE__STR_H__
++/**
++ * Author: Dillon O'Leary
++ * Ezra Boley
++ * This module frees the different stucts
++ * that use malloc
++ */
++#include "parser.h"
++#include "hash_map.h"
++
++/**
++ * Free the build spec
++ * 0 on success, -1 on failure
++ */
++void freeSpec(BuildSpec * spec);
++
++/**
++ * Free the node and the spec
++ * 0 on success, -1 on failure
++ */
++void freeNode(BuildSpecNode * node);
++
++/**
++ * free the DAG_map
++ */
++void freeHashMap(DAG_map * map);
++
++#endif
+diff --git a/hash_map.c b/hash_map.c
+index 1c70ac1..42f78c4 100644
+--- a/hash_map.c
++++ b/hash_map.c
+@@ -34,9 +34,9 @@ hash(unsigned char *str)
+ }
+ 
+ int getIndex(char * str, int size) {
+-    //printf("Hash #: %ld, with mod %d\n", hash( (unsigned char*) str), (int)(hash( (unsigned char*) str) % size));
+     return hash( (unsigned char*) str) % size;
+ }
++
+ void insertNode(DAG_map * map, BuildSpecNode * node) {
+     int hashIndex = getIndex(node->data->target, map->size);
+     while (map->map[hashIndex] != NULL) {
+@@ -57,6 +57,7 @@ void populateMap(DAG_map * map, BuildSpecList* specs) {
+         node->tempMark = node->permMark = 0;
+         node->children = currSpec->deps;
+         node->hasExec = 0;
++        node->isDummy = 0;
+         insertNode(map, node);
+         currSpec = next_BS(currSpec);
+     }
+@@ -76,6 +77,7 @@ BuildSpecNode * createDummyNode(char* target) {
+     spec->cmds->len = 0;
+     node->data = spec;
+     node->hasExec = 0;
++    node->isDummy = 1;
+     return node;
+ }
+ 
+diff --git a/hash_map.h b/hash_map.h
+index f1c2124..609061b 100644
+--- a/hash_map.h
++++ b/hash_map.h
+@@ -22,6 +22,8 @@ typedef struct BuildSpecNode {
+     BuildSpec * data;
+     char ** children;
+     int hasExec;
++    int isDummy;
++    // whether the node is just a dummy node
+ } BuildSpecNode;
+ 
+ // Directed Acyclic Graph mapped with a
+diff --git a/make.c b/make.c
+index e5ac4ed..93eb6d1 100644
+--- a/make.c
++++ b/make.c
+@@ -9,14 +9,15 @@
+  */
+ #include "assess_specs.h"
+ #include "parser.h"
++#include "hash_map.h"
+ #include "parse_text.h"
+ #include "spawn.h"
+ #include "parse_args.h"
++#include "free_str.h"
+ #include <string.h>
+ #include <stdlib.h>
+ 
+ int main(int argc, char *argv[]) {
+-    FILE * fp;
+     BuildSpecList specs;
+     char *root = NULL; // the root node. If it's not specified then
+     // its assumed to be the first build spec
+@@ -37,12 +38,12 @@ int main(int argc, char *argv[]) {
+         root = argv[1];
+     }
+     parse_args(argc, argv, &fflag, filename);
+-    fp = open_makefile(fflag, filename);
+-    getBuildSpecList(&specs, fp);
+-      
++    get_build_spec_list(&specs, fflag, filename);
+     if (root == NULL)
+         specs.root = specs.frstBS->target;
+     else specs.root = root;
+-    getCommandList(&cmdList, &specs);
++    DAG_map map;
++    getCommandList(&map, &cmdList, &specs);
+     create_family(&cmdList);
++    //freeHashMap(&map);
+ }
+diff --git a/makefile b/makefile
+index 315e09e..4b7484f 100644
+--- a/makefile
++++ b/makefile
+@@ -1,14 +1,17 @@
+ CC = gcc
+-WARNING_FLAGS = -g -Wall -Wextra
++WARNING_FLAGS = -O0 -g -Wall -Wextra
+ EXE = 537make
+ SCAN_BUILD_DIR = scan-build-out
+ 
+-537make: make.o assess_specs.o hash_map.o spawn.o parse_text.o list_utils.o parse_args.o
+-	$(CC) -o $(EXE) make.o assess_specs.o spawn.o parser.h hash_map.o parse_text.o list_utils.o parse_args.o 
++537make: free_str.o make.o assess_specs.o hash_map.o spawn.o parse_text.o list_utils.o parse_args.o
++	$(CC) -o $(EXE) make.o free_str.o assess_specs.o spawn.o parser.h hash_map.o parse_text.o list_utils.o parse_args.o 
+ 
+ make.o: make.c
+ 	$(CC) $(WARNING_FLAGS) -c make.c
+ 
++free_str.o: free_str.h free_str.c
++	$(CC) $(WARNING_FLAGS) -c free_str.c
++
+ assess_specs.o: assess_specs.c assess_specs.h
+ 	$(CC) $(WARNING_FLAGS) -c assess_specs.c
+ 
+diff --git a/parse_text.c b/parse_text.c
+index cd6801a..c32e7d6 100644
+--- a/parse_text.c
++++ b/parse_text.c
+@@ -13,22 +13,25 @@
+ #define MAX_LINE_LENGTH 1024
+ 
+ 
+-int getBuildSpecList(BuildSpecList *specs, FILE *fp) {
+-    char *file_line;        // Points to the incoming line
++int get_build_spec_list(BuildSpecList *specs, bool fflag, char *filename) {
++    FILE **fp = open_makefile(fflag, filename);
++    char file_line[MAX_LINE_LENGTH] = "";        // Points to the incoming line
+     bool isEnd = false;     // Flag set at the EOF mark so control loop knows when to end
+     int lineNum = 0;        // Keeps track of line number for error messages
+     /* Read line in, check if valid, parse the line into the specs of project */
+     while (!isEnd) {
+         lineNum++;
+-        file_line = get_file_line(fp, &isEnd, lineNum);
++        get_file_line(*fp, &isEnd, lineNum, file_line);
+         if (file_line == NULL) continue;
+         parse_line(file_line, specs, lineNum);
+     }
++    fclose(*fp);
++    free(fp);
+     return 0;
+ }
+ 
+ 
+-char **tokenize(char *line, int *depsLen) {
++char **tokenize(char *line, int *depsLen) {//, BuildSpecList *bsl) {
+     /* Allocate a buffer for ind. words and one for the list. They both need
+      * to be max length in case our line is one really long word */
+     char **tokenList = calloc(MAX_LINE_LENGTH, sizeof(char *));
+@@ -172,7 +175,8 @@ void setRedirects(char** cmdTokens, Command* cmd) {
+ 
+ // Removes the colon if there is one
+ int check_colon(char *line) {
+-    for (int i = 0; i < MAX_LINE_LENGTH; i++) {
++    int i;
++    for (i = 0; i < MAX_LINE_LENGTH; i++) {
+         if (line[i] == ':') {
+             line[i] = ' ';
+             return 0;
+@@ -204,11 +208,9 @@ void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
+         cmd->inputSet = 0;
+         cmd->outputSet = 0;
+         cmd->argv = cmdTokens;
+-        //setRedirects(cmdTokens, cmd);
+         cmd->argv = cmdTokens;
+         cmd->argc = cmdsLen;
+         append_cmd_to_buildspec(buildSpec, cmd);
+-        free(line);
+         return;
+     }
+     if (c == '\n' || c == EOF) return;  // Need a further check
+@@ -226,7 +228,8 @@ void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
+         exit(1);
+     }  // Checking to see if there is a colon to remove
+ 
+-    tokens = tokenize(line, &cmdsLen);
++
++    tokens = tokenize(line, &cmdsLen);//, );
+     
+     BuildSpec *buildSpec = malloc(sizeof(BuildSpec));
+     
+@@ -245,6 +248,7 @@ void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
+     }
+ 
+     buildSpec->deps = tokens;
++    tokens = NULL;
+     buildSpec->depsLen = cmdsLen - 1;
+     buildSpec->cmds = malloc(sizeof(CommandList));
+     if (buildSpec->cmds == NULL) {
+@@ -252,22 +256,15 @@ void parse_line(char *line, BuildSpecList *buildSpecList, int lineNum) {
+         exit(1);
+     }
+     buildSpec->cmds->len = 0;
+-    free(line);
+ }
+ 
+-char *get_file_line(FILE *fp, bool *isEnd, int lineNum) {
+-    char *input = malloc(MAX_LINE_LENGTH * sizeof(char));
+-   
+-    if (input == NULL) {
+-        fprintf(stderr, "Failure to allocate memory. Exiting...\n");
+-        exit(1);
+-    }
+-
++void get_file_line(FILE *fp, bool *isEnd, int lineNum, char *input) {
++    
+     for (int i = 0; i < MAX_LINE_LENGTH; i++) {
+         input[i] = fgetc(fp);
+         if (input[i] == '\n' || input[i] == EOF) {
+             if (input[i] == EOF) *isEnd = true;
+-            return input;
++            return;
+         }
+         if (input[i] == '\0') {
+             fprintf(stderr, "%d: Invalid Null char mid line\n", lineNum);
+@@ -276,10 +273,9 @@ char *get_file_line(FILE *fp, bool *isEnd, int lineNum) {
+     }
+     fprintf(stderr, "%d: Line too long, ignoring\n", lineNum);
+     exit(1);
+-    return NULL;
+ }
+ 
+-FILE *open_makefile(bool fflag, char *filename) {
++FILE **open_makefile(bool fflag, char *filename) {
+     FILE **fptr = malloc(sizeof(FILE *));
+     
+     if (fptr == NULL) {
+@@ -310,6 +306,6 @@ FILE *open_makefile(bool fflag, char *filename) {
+      * over the program so it would end up being more trouble and causeing more
+      * potential bugs to free it near the end than it is to just leave it be */
+ 
+-    return *fptr;                   
++    return fptr;                   
+ }
+ 
+diff --git a/parse_text.h b/parse_text.h
+index ec2910b..ca20254 100644
+--- a/parse_text.h
++++ b/parse_text.h
+@@ -8,22 +8,25 @@
+ #include <stdbool.h>
+ #include "parser.h"
+ 
++// This file is more of the low level implentation of the parser
++// than the parser.h which is more in charge of API
+ 
+-char **tokenize(char *line, int *depsLen);
++/* Splits the strings into individual words */
++char **tokenize(char *line, int *depsLen);//, BuildSpecList *buildSpecList);
+ 
+ /*
+ * Opens up a makefile, Makefile, or custom filename
+ */
+-FILE *open_makefile(bool is_custom_name, char *filename);
++FILE **open_makefile(bool is_custom_name, char *filename);
+ 
+ /* 
+  * The overall wrapper that handles parsing the entire build file.
+  * It sets up all of the commands that will need to be fulfilled
+  */
+-BuildSpecList parse_makefile(bool fflag, char *filename);
++int get_build_spec_list(BuildSpecList *specs, bool fflag, char *filename);
+ 
+ /* Gets a single line from an open file */
+-char *get_file_line(FILE *fp, bool *isEnd, int lineNum);
++void get_file_line(FILE *fp, bool *isEnd, int lineNum, char *fileLine);
+ 
+ /* Breaks apart the line fills in the build spec list based on
+  * that file line
+diff --git a/parser.h b/parser.h
+index fc769ec..a07467a 100644
+--- a/parser.h
++++ b/parser.h
+@@ -50,6 +50,6 @@ typedef struct {
+  *  spec list, making the syntax is right
+  *  returns 0 on success, exits on failure.
+  */
+-int getBuildSpecList(BuildSpecList* specs, FILE* fp);
++//int getBuildSpecList(BuildSpecList* specs, FILE* fp);
+ 
+ #endif
+diff --git a/proj3/simple_testcase/makefile b/proj3/simple_testcase/makefile
+index 37b764b..b7d4ef4 100644
+--- a/proj3/simple_testcase/makefile
++++ b/proj3/simple_testcase/makefile
+@@ -6,7 +6,7 @@ all: prog1 prog2 prog3
+ prog1 : main1.o queue.o reader.o writer.o
+ 	echo Building prog1
+ 
+-	gcc -o prog1 main1.o que.o reader.o writer.o
++	gcc -o prog1 main1.o queue.o reader.o writer.o
+ 
+ 	echo prog1 build successfully
+ 
+@@ -46,7 +46,7 @@ parser.o: parser.c parser.h
+ 
+ main3.o: main3.c process1.h process2.h graph.h djikstra.h
+ 	echo Building main3.o!
+-	gcc -c mai3.c
++	gcc -c main3.c
+ 
+ 
+ process1.o: process1.c process1.h graph.h djikstra.h
+diff --git a/proj3/simple_testcase/prog1 b/proj3/simple_testcase/prog1
+new file mode 100755
+index 0000000..6f629de
+Binary files /dev/null and b/proj3/simple_testcase/prog1 differ
+diff --git a/proj3/simple_testcase/prog2 b/proj3/simple_testcase/prog2
+index cca005b..48e1c2e 100755
+Binary files a/proj3/simple_testcase/prog2 and b/proj3/simple_testcase/prog2 differ
+diff --git a/proj3/simple_testcase/prog3 b/proj3/simple_testcase/prog3
+new file mode 100755
+index 0000000..b6b5097
+Binary files /dev/null and b/proj3/simple_testcase/prog3 differ
+diff --git a/spawn.c b/spawn.c
+index 0e896b5..511dd3a 100644
+--- a/spawn.c
++++ b/spawn.c
+@@ -47,7 +47,10 @@ void parseAndCleanCmd(Command* cmd) {
+     } else if ( newArgv[newArrLen - 1] != NULL) {
+         newArgv[newArrLen++] = NULL;
+     }
++    // Pointer for freeing the old array
++    char** temp = cmd->argv;
+     cmd->argv = newArgv;
++    free(temp);
+     cmd->argc = newArrLen;
+ }
+ 
+@@ -70,6 +73,9 @@ void create_child(Command *cmd) {
+     childArgv[cmd->argc] = NULL;
+     if (childArgv == NULL) return;
+     if (childArgv[0] == NULL) return;
++    for (int i = 0; i < cmd->argc - 1; i++)    
++        printf("%s ", childArgv[i]);
++    printf("\n");
+     if ((child_pid = fork()) == 0) {
+         // Child
+         setIO(cmd);
+diff --git a/spawn.h b/spawn.h
+index af63cac..7277395 100644
+--- a/spawn.h
++++ b/spawn.h
+@@ -5,6 +5,8 @@
+ #ifndef __SPAWN_H__
+ #define __SPAWN_H__
+ 
++/* This is in charge of creating each child process and running through them
++ * It is the overall wrapper for the file */
+ void create_family(CommandList *cmdlist);
+ 
+ #endif
+diff --git a/testout.txt b/testout.txt
+index e06699c..40c6c36 100644
+--- a/testout.txt
++++ b/testout.txt
+@@ -1,2 +1,27 @@
+ test_echo
+ test_echo
++test_echo
++test_echo
++test_echo
++test_echo
++test_echo
++test_echo
++test_echo
++test_echo
++test_echo
++test_echo
++test_echo
++test_echo
++test_echo
++test_echo
++test_echo
++test_echo
++test_echo
++test_echo
++test_echo
++test_echo
++test_echo
++test_echo
++test_echo
++test_echo
++test_echo
+diff --git a/testout2.txt b/testout2.txt
+index d587aa2..e23db10 100644
+--- a/testout2.txt
++++ b/testout2.txt
+@@ -1,2 +1,27 @@
+ test2
+ test2
++test2
++test2
++test2
++test2
++test2
++test2
++test2
++test2
++test2
++test2
++test2
++test2
++test2
++test2
++test2
++test2
++test2
++test2
++test2
++test2
++test2
++test2
++test2
++test2
++test2
+diff --git a/tests/proj3/simple_testcase/main1.c b/tests/proj3/simple_testcase/main1.c
+deleted file mode 100644
+index a241df3..0000000
+--- a/tests/proj3/simple_testcase/main1.c
++++ /dev/null
+@@ -1,9 +0,0 @@
+-#include "reader.h"
+-#include "writer.h"
+-#include "queue.h"
+-#include <stdio.h>
+-
+-int main()
+-{
+-    printf("Hello World!\n");
+-}
+\ No newline at end of file
+diff --git a/tests/proj3/simple_testcase/prog1 b/tests/proj3/simple_testcase/prog1
+deleted file mode 100755
+index f2effd0..0000000
+Binary files a/tests/proj3/simple_testcase/prog1 and /dev/null differ
+diff --git a/tests/proj3/simple_testcase/prog2 b/tests/proj3/simple_testcase/prog2
+deleted file mode 100755
+index 73b2260..0000000
+Binary files a/tests/proj3/simple_testcase/prog2 and /dev/null differ

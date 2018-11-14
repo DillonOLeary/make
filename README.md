@@ -18,3 +18,6 @@ make.c contains the main control loop for the program.
 
 ## Memory Leaks
 When using valgrind, users may notice memory leaks from tokenize, the spec list creator, or the hash map creator. These leaks are intentional because the memory allocated by those functions are used for most of the lifespan of the program.
+
+## p3-1 Changes
+All chages are shown in the p3-1\_changes.txt file. Notible changes are in the file assess\_specs.c in checkDeps, visitNode, getCommandList. These changes are meant to free the dummy nodes that are created when a file is checked for a dependency. Also the map pointer is passed in such to allocate less memory on the heap. A new module was also created called free\_str.h and free\_str.h. This module is used to free all the memory allocated in the nodes, build specs, and commands. In the hash\_map.c file, a flag was added to indicate if the node is a dummy node.
