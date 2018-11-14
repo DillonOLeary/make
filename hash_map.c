@@ -34,9 +34,9 @@ hash(unsigned char *str)
 }
 
 int getIndex(char * str, int size) {
-    //printf("Hash #: %ld, with mod %d\n", hash( (unsigned char*) str), (int)(hash( (unsigned char*) str) % size));
     return hash( (unsigned char*) str) % size;
 }
+
 void insertNode(DAG_map * map, BuildSpecNode * node) {
     int hashIndex = getIndex(node->data->target, map->size);
     while (map->map[hashIndex] != NULL) {
