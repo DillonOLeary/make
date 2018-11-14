@@ -120,7 +120,11 @@ int getCommandList(DAG_map * map, CommandList * cmdList, BuildSpecList * list) {
     init_cmd_list(cmdList);
     initHashMap(map, list);
     // create a list of commands
-    visitNode(map, lookup(map, map->root), cmdList);
+    BuildSpecNode * temp = lookup(map, map->root);
+    visitNode(map, temp, cmdList);
+    if (temp->isDummy == 1) {
+        freeNode(temp);
+    }
     return 0;
 }
 
