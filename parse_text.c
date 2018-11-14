@@ -15,7 +15,7 @@
 
 int get_build_spec_list(BuildSpecList *specs, bool fflag, char *filename) {
     FILE **fp = open_makefile(fflag, filename);
-    char file_line[MAX_LINE_LENGTH];        // Points to the incoming line
+    char file_line[MAX_LINE_LENGTH] = "";        // Points to the incoming line
     bool isEnd = false;     // Flag set at the EOF mark so control loop knows when to end
     int lineNum = 0;        // Keeps track of line number for error messages
     /* Read line in, check if valid, parse the line into the specs of project */
@@ -175,7 +175,8 @@ void setRedirects(char** cmdTokens, Command* cmd) {
 
 // Removes the colon if there is one
 int check_colon(char *line) {
-    for (int i = 0; i < MAX_LINE_LENGTH; i++) {
+    int i;
+    for (i = 0; i < MAX_LINE_LENGTH; i++) {
         if (line[i] == ':') {
             line[i] = ' ';
             return 0;
