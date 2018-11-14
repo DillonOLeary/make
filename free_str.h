@@ -13,17 +13,17 @@
  * Free the build spec
  * 0 on success, -1 on failure
  */
-int freeSpec(BuildSpec * spec);
+void freeSpec(BuildSpec * spec);
 
 /**
  * Free the node and the spec
  * 0 on success, -1 on failure
  */
-int freeNode(BuildSpecNode * node);
+void freeNode(BuildSpecNode * node);
 
 /**
  * free the DAG_map
  */
-int freeHashMap(DAG_map * map);
+void freeHashMap(DAG_map * map);
 
 #endif
