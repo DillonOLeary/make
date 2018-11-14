@@ -39,7 +39,6 @@ int main(int argc, char *argv[]) {
     }
     parse_args(argc, argv, &fflag, filename);
     get_build_spec_list(&specs, fflag, filename);
-    printf("ARGC: %d\n", specs.frstBS->nxtBuildSpec->cmds->frstCmd->argc);      
     if (root == NULL)
         specs.root = specs.frstBS->target;
     else specs.root = root;
@@ -77,5 +76,5 @@ int main(int argc, char *argv[]) {
     printf("DONE\n");
   */  
     create_family(&cmdList);
-    freeHashMap(&map);
+    //freeHashMap(&map);
 }
