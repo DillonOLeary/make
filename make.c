@@ -45,5 +45,5 @@ int main(int argc, char *argv[]) {
     DAG_map map;
     getCommandList(&map, &cmdList, &specs);
     create_family(&cmdList);
-    freeHashMap(&map);
+    //freeHashMap(&map);
 }
