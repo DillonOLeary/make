@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
     }
     parse_args(argc, argv, &fflag, filename);
     get_build_spec_list(&specs, fflag, filename);
-      
+    printf("ARGC: %d\n", specs.frstBS->nxtBuildSpec->cmds->frstCmd->argc);      
     if (root == NULL)
         specs.root = specs.frstBS->target;
     else specs.root = root;
@@ -47,28 +47,31 @@ int main(int argc, char *argv[]) {
     Command   *curr_cmd = curr_bs->cmds->frstCmd;
     Command   *prev_cmd;
     // FREE THE LIST!
-    /*
+/*    
     for (int i = 0; i < specs.len; i++) {
         for (int j = 0; j < curr_bs->cmds->len; j++) {
+            printf("argc: %s\n", curr_bs->cmds->frstCmd->nxtCmd->argv[0]);
             for (int k = 0; k < curr_cmd->argc; k++) {
+                printf("CURR CMD: %d\n", curr_cmd->argv[k]);
+                //if (curr_cmd->argv[k] != NULL && curr_cmd->argv[k] != '\0')
                 free(curr_cmd->argv[k]);
                 printf("HERE0\n");
             }
-            //free(curr_cmd->argv);
+            //if (curr_cmd != NULL && curr_cmd->argv != NULL) free(curr_cmd->argv);
             printf("here1\n");
             prev_cmd = curr_cmd;
             curr_cmd = curr_cmd->nxtCmd;
-            free(prev_cmd);
+            if (prev_cmd != NULL) free(prev_cmd);
             printf("here2\n");
         }
-        free(curr_bs->cmds);
+        // free(curr_bs->cmds);
         printf("here3\n");
         prev_bs = curr_bs;
         curr_bs = curr_bs->nxtBuildSpec;
-        free(prev_bs);
+        // free(prev_bs);
         printf("here4\n");
     }
     printf("DONE\n");
-    */
+  */  
     create_family(&cmdList);
 }
