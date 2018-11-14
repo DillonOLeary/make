@@ -1,0 +1,29 @@
+# make
+Program 3 for cs537
+* Developers: Dillon O'Leary, Ezra Boley 
+
+## Program Structure
+There are three phases that the program goes through. 
+
+First it reads each line of the file using the functions in parse_text.c and compiles a list of targets, commands, and dependencies. 
+
+Then it uses a hashmap and the functions in assess_specs.c to create a graph of dependencies and that is where it decides which commands need to be run and which can be discarded.
+
+Lastly the compiled list of instructions is passed into spawn.c which is responsible for creating each process and making sure each executes successfully.
+
+make.c contains the main control loop for the program.
+
+## Running
+537make accepts a specific target to build as a command line arguement as well as the -f option followed by a specific file name.
+
+## Release Notes:
+The only warning coming from clang is for the file pointer, there is a note about it at the location of the warning, the end of parse_text.c
+
+## Changes for 3-1: format <file-name>:<line-number-of-change>
+    parse_text.c:16 || Function renamed to be more consistent with the overall naming scheme, and args were changed
+    parse_text.c:18 || File is opened in this function instead to better limit the scope it is available
+This change was also made because it makes the freeing of the FILE* easier, to avoid a memory leak.
+    parse_text.c:28 || File close was added so that memory can be successfully freed
+    parse_text.c:29 || The FILE * for the file read in is freed, this * this fixes the Clang warning *.
+    parse_text.c:18 || The temp buffer for each line is initialized. Valgrind did not like that it contained garbage, 
+and it was especially a problem at the check_colon function. By clearing it to "", the problem is solved.
