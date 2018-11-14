@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
     parse_args(argc, argv, &fflag, filename);
     fp = open_makefile(fflag, filename);
     getBuildSpecList(&specs, fp);
-      
+        
     if (root == NULL)
         specs.root = specs.frstBS->target;
     else specs.root = root;

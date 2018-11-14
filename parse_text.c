@@ -276,7 +276,7 @@ char *get_file_line(FILE *fp, bool *isEnd, int lineNum) {
 }
 
 FILE *open_makefile(bool fflag, char *filename) {
-    FILE **fptr = malloc(sizeof(FILE *));
+    FILE **fptr = malloc(sizeof(FILE*));
     
     if (fptr == NULL) {
         fprintf(stderr, "Failure to allocate memory. Exiting...\n");
