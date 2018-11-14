@@ -273,7 +273,6 @@ void get_file_line(FILE *fp, bool *isEnd, int lineNum, char *input) {
     exit(1);
 }
 
-
 FILE **open_makefile(bool fflag, char *filename) {
     FILE **fptr = malloc(sizeof(FILE *));
     
