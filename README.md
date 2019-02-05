@@ -1,5 +1,5 @@
 # make
-Program 3 for cs537
+This program is a partial recreation of the software 'make'
 * Developers: Dillon O'Leary, Ezra Boley 
 
 ## Program Structure
